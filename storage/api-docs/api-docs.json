@@ -1,0 +1,777 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SSO Mitra • Identity Provider & OAuth2 Authorization Server",
+        "description": "Layanan SSO Mitra menggunakan Laravel Sanctum untuk autentikasi dan OAuth2 Authorization Code Grant untuk SSO integration dengan aplikasi klien (SIPRIMA, dsb).",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:9000",
+            "description": "Local SSO Mitra Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/apps": {
+            "get": {
+                "tags": [
+                    "App Picker"
+                ],
+                "summary": "Daftar aplikasi yang boleh diakses oleh user",
+                "operationId": "SsoMitraAppPicker",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user (Sanctum Token)",
+                "operationId": "SsoMitraLogin",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "asset_admin@asetrisk"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "S1pr!ma123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Asset Admin"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "asset_admin@asetrisk"
+                                                },
+                                                "roles": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "role": {
+                                                                "type": "string",
+                                                                "example": "asset_admin"
+                                                            },
+                                                            "module": {
+                                                                "type": "string",
+                                                                "example": "asset_risk"
+                                                            },
+                                                            "tenant_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "tenants": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "tenant_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "nama": {
+                                                                "type": "string",
+                                                                "example": "Diskominfo Kota"
+                                                            },
+                                                            "kode": {
+                                                                "type": "string",
+                                                                "example": "diskominfo"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "apps": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "string",
+                                                                "example": "asset"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Asset Management"
+                                                            },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "http://127.0.0.1:8000"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout dan revoke token aktif",
+                "operationId": "SsoMitraLogout",
+                "responses": {
+                    "200": {
+                        "description": "Token revoked"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Profil user aktif + konteks",
+                "operationId": "SsoMitraMe",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/roles": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Daftar role user",
+                "operationId": "SsoMitraRoles",
+                "parameters": [
+                    {
+                        "name": "module",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Informasi refresh token",
+                "operationId": "SsoMitraRefresh",
+                "responses": {
+                    "200": {
+                        "description": "Info"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/sso/authorize": {
+            "get": {
+                "tags": [
+                    "SSO"
+                ],
+                "summary": "Get authorization code untuk client aplikasi (OAuth2 Authorization Code Grant)",
+                "operationId": "SsoMitraSsoAuthorize",
+                "parameters": [
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "siprima-app"
+                        }
+                    },
+                    {
+                        "name": "redirect_uri",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "http://127.0.0.1:8000/api/v1/auth/sso/callback"
+                        }
+                    },
+                    {
+                        "name": "response_type",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "code"
+                        }
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Authorization code berhasil dibuat (valid 5 menit)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "auth_code": {
+                                                    "type": "string",
+                                                    "example": "xxxxxxxxxxxxxxxx"
+                                                },
+                                                "state": {
+                                                    "type": "string"
+                                                },
+                                                "redirect_uri": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid client_id atau redirect_uri tidak sesuai"
+                    },
+                    "401": {
+                        "description": "User belum login"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/sso/token": {
+            "post": {
+                "tags": [
+                    "SSO"
+                ],
+                "summary": "Tukar authorization code dengan access token (OAuth2 Token Exchange)",
+                "operationId": "SsoMitraSsoToken",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "client_id",
+                                    "client_secret",
+                                    "grant_type"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "xxxxxxxxxxxxxxxx"
+                                    },
+                                    "client_id": {
+                                        "type": "string",
+                                        "example": "siprima-app"
+                                    },
+                                    "client_secret": {
+                                        "type": "string",
+                                        "example": "supersecret123"
+                                    },
+                                    "grant_type": {
+                                        "type": "string",
+                                        "example": "authorization_code"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Access token berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "1|xxxxxxxxxxxxxxxxxxxx"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 7200
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid client_id atau client_secret"
+                    },
+                    "401": {
+                        "description": "Authorization code tidak valid atau expired"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sso/userinfo": {
+            "get": {
+                "tags": [
+                    "SSO"
+                ],
+                "summary": "Dapatkan informasi user dan roles (untuk keperluan callback client)",
+                "operationId": "SsoMitraSsoUserinfo",
+                "responses": {
+                    "200": {
+                        "description": "User info berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "roles": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "role": {
+                                                        "type": "string"
+                                                    },
+                                                    "module": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User belum login"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/sso/redirect": {
+            "get": {
+                "tags": [
+                    "SSO"
+                ],
+                "summary": "Dapatkan URL redirect ke IdP (legacy - untuk client lain)",
+                "operationId": "SsoMitraSsoRedirect",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "url": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sso/callback": {
+            "get": {
+                "tags": [
+                    "SSO"
+                ],
+                "summary": "Callback dari IdP (legacy - untuk client lain)",
+                "operationId": "SsoMitraSsoCallback",
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil autentikasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "provider": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "State/Code invalid"
+                    },
+                    "401": {
+                        "description": "Tidak bisa tukar authorization code"
+                    }
+                }
+            }
+        },
+        "/api/v1/iam/roles": {
+            "get": {
+                "tags": [
+                    "IAM"
+                ],
+                "summary": "Daftar role berdasarkan modul",
+                "operationId": "SsoMitraIamRoles",
+                "parameters": [
+                    {
+                        "name": "module",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/iam/assign-role": {
+            "post": {
+                "tags": [
+                    "IAM"
+                ],
+                "summary": "Assign role ke user",
+                "operationId": "SsoMitraIamAssign",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "role",
+                                    "tenant_id",
+                                    "module"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    },
+                                    "tenant_id": {
+                                        "type": "integer"
+                                    },
+                                    "module": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Role assigned"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/iam/users/{id}/roles": {
+            "get": {
+                "tags": [
+                    "IAM"
+                ],
+                "summary": "Daftar role user per tenant & module",
+                "operationId": "SsoMitraIamUserRoles",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/iam/revoke-role": {
+            "post": {
+                "tags": [
+                    "IAM"
+                ],
+                "summary": "Revoke role dari user",
+                "operationId": "SsoMitraIamRevoke",
+                "responses": {
+                    "200": {
+                        "description": "Role revoked"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/iam/audit-logs": {
+            "get": {
+                "tags": [
+                    "IAM"
+                ],
+                "summary": "Audit log IAM terbaru",
+                "operationId": "SsoMitraIamAuditLogs",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tenants": {
+            "get": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Daftar tenant milik user",
+                "operationId": "SsoMitraTenantList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tenants/{tenant}/switch": {
+            "post": {
+                "tags": [
+                    "Tenant"
+                ],
+                "summary": "Switch tenant aktif",
+                "operationId": "SsoMitraTenantSwitch",
+                "parameters": [
+                    {
+                        "name": "tenant",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tenant switched"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "description": "Bearer token dari endpoint login lokal (untuk protected endpoints yang memerlukan auth), atau access token dari OAuth2 token endpoint",
+                "bearerFormat": "Sanctum",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Autentikasi lokal - login, logout, profil, refresh token"
+        },
+        {
+            "name": "SSO",
+            "description": "OAuth2 Authorization Code Grant Flow - authorize, token exchange, userinfo (untuk aplikasi klien seperti SIPRIMA)"
+        },
+        {
+            "name": "Tenant",
+            "description": "Manajemen tenant/OPD - daftar dan switch tenant"
+        },
+        {
+            "name": "IAM",
+            "description": "IAM/RBAC - manajemen role dan permissions"
+        },
+        {
+            "name": "App Picker",
+            "description": "Daftar aplikasi yang bisa diakses user berdasarkan role"
+        }
+    ]
+}

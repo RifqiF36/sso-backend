@@ -1,0 +1,426 @@
+{
+  "info": {
+    "name": "SSO MITRA • Auth + SSO + Tenant + IAM",
+    "_postman_id": "e4b7a2d5-0d6e-4c39-a111-demo-sso-0001",
+    "description": "Koleksi untuk menguji endpoint Auth, SSO, Tenant (OPD), IAM/RBAC, dan App Picker pada layanan SSO terpisah.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:9000" },
+    { "key": "token", "value": "" },
+    { "key": "user_id", "value": "1" },
+    { "key": "tenant_id", "value": "1" },
+    { "key": "module", "value": "asset_risk" },
+    { "key": "sso_code", "value": "demo-code" },
+    { "key": "sso_state", "value": "xyz123" }
+  ],
+  "item": [
+    {
+      "name": "\ud83d\udd11 Auth (Local)",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"email\": \"asset_admin@asetrisk\",\\n  \"password\": \"S1pr!ma123\"\\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/auth/logout"
+          }
+        },
+        {
+          "name": "Me (Profil Aktif)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/auth/me"
+          }
+        },
+        {
+          "name": "My Roles (ringkas)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/auth/roles"
+          }
+        },
+        {
+          "name": "Refresh (informasi)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/auth/refresh"
+          }
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udd10 SSO (Optional)",
+      "item": [
+        {
+          "name": "SSO Redirect (ambil URL IdP)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/auth/sso/redirect"
+          }
+        },
+        {
+          "name": "SSO Callback (demo: code+state)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/sso/callback?code={{sso_code}}&state={{sso_state}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "sso", "callback"],
+              "query": [
+                { "key": "code", "value": "{{sso_code}}" },
+                { "key": "state", "value": "{{sso_state}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "\ud83c\udfe2 Tenant (OPD)",
+      "item": [
+        {
+          "name": "List Tenants (milik user)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/tenants"
+          }
+        },
+        {
+          "name": "Switch Tenant",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/tenants/{{tenant_id}}/switch"
+          }
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udec2 IAM / RBAC",
+      "item": [
+        {
+          "name": "Roles by Module",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/iam/roles?module={{module}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "iam", "roles"],
+              "query": [{ "key": "module", "value": "{{module}}" }]
+            }
+          }
+        },
+        {
+          "name": "User Roles (detail per tenant/module)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/iam/users/{{user_id}}/roles"
+          }
+        },
+        {
+          "name": "Assign Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"user_id\": {{user_id}},\\n  \"role\": \"asset_admin\",\\n  \"tenant_id\": {{tenant_id}},\\n  \"module\": \"{{module}}\"\\n}"
+            },
+            "url": "{{base_url}}/api/v1/iam/assign-role"
+          }
+        },
+        {
+          "name": "Revoke Role (soft)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"user_id\": {{user_id}},\\n  \"role\": \"asset_admin\",\\n  \"tenant_id\": {{tenant_id}},\\n  \"module\": \"{{module}}\"\\n}"
+            },
+            "url": "{{base_url}}/api/v1/iam/revoke-role"
+          }
+        },
+        {
+          "name": "IAM Audit Logs (terbaru)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/iam/audit-logs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udce6 App Picker",
+      "item": [
+        {
+          "name": "List Apps yang boleh diakses user",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/apps"
+          }
+        }
+      ]
+    }
+  ]
+}
+{
+  "info": {
+    "name": "SSO MITRA • Auth + SSO + Tenant + IAM",
+    "_postman_id": "e4b7a2d5-0d6e-4c39-a111-demo-sso-0001",
+    "description": "Koleksi untuk menguji endpoint Auth, SSO, Tenant (OPD), IAM/RBAC, dan App Picker pada layanan SSO terpisah.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:9000" },
+    { "key": "token", "value": "" },
+    { "key": "user_id", "value": "1" },
+    { "key": "tenant_id", "value": "1" },
+    { "key": "module", "value": "asset_risk" },
+    { "key": "sso_code", "value": "demo-code" },
+    { "key": "sso_state", "value": "xyz123" }
+  ],
+  "item": [
+    {
+      "name": "🔑 Auth (Local)",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"asset_admin@asetrisk\",\n  \"password\": \"S1pr!ma123\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/logout"
+          }
+        },
+        {
+          "name": "Me (Profil Aktif)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/me"
+          }
+        },
+        {
+          "name": "My Roles (ringkas)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/roles"
+          }
+        },
+        {
+          "name": "Refresh (informasi)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/auth/refresh"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔐 SSO (Optional)",
+      "item": [
+        {
+          "name": "SSO Redirect (ambil URL IdP)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/auth/sso/redirect"
+          }
+        },
+        {
+          "name": "SSO Callback (demo: code+state)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/sso/callback?code={{sso_code}}&state={{sso_state}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "sso",
+                "callback"
+              ],
+              "query": [
+                { "key": "code", "value": "{{sso_code}}" },
+                { "key": "state", "value": "{{sso_state}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Tenant (OPD)",
+      "item": [
+        {
+          "name": "List Tenants (milik user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/tenants"
+          }
+        },
+        {
+          "name": "Switch Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/tenants/{{tenant_id}}/switch"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛂 IAM / RBAC",
+      "item": [
+        {
+          "name": "Roles by Module",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/iam/roles?module={{module}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "iam",
+                "roles"
+              ],
+              "query": [
+                { "key": "module", "value": "{{module}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "User Roles (detail per tenant/module)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/iam/users/{{user_id}}/roles"
+          }
+        },
+        {
+          "name": "Assign Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{user_id}},\n  \"role\": \"asset_admin\",\n  \"tenant_id\": {{tenant_id}},\n  \"module\": \"{{module}}\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/iam/assign-role"
+          }
+        },
+        {
+          "name": "Revoke Role (soft)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{user_id}},\n  \"role\": \"asset_admin\",\n  \"tenant_id\": {{tenant_id}},\n  \"module\": \"{{module}}\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/iam/revoke-role"
+          }
+        },
+        {
+          "name": "IAM Audit Logs (terbaru)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/iam/audit-logs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 App Picker",
+      "item": [
+        {
+          "name": "List Apps yang boleh diakses user",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": "{{base_url}}/api/v1/apps"
+          }
+        }
+      ]
+    }
+  ]
+}
+
