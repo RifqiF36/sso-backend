@@ -57,3 +57,43 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Installation (Quick Start)
+
+Follow these steps after cloning the repository.
+
+1. Install PHP dependencies:
+
+```bash
+composer install
+```
+
+2. Copy `.env` and generate app key:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+3. Configure database in `.env`, then run migrations & seeders:
+
+```bash
+php artisan migrate --seed
+```
+
+4. Install frontend dependencies and build assets (if needed):
+
+```bash
+npm install
+npm run build
+```
+
+5. Run local server:
+
+```bash
+php artisan serve
+```
+
+Notes:
+- Run `composer install` and `npm install` on the machine where you deploy; the `vendor/` and `node_modules/` directories are ignored by `.gitignore` and are not in the repo.
+- If you need to run tests: `php artisan test`.
