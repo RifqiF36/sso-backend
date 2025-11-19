@@ -19,27 +19,122 @@ class IamQuickSeed extends Seeder
             ['nama' => 'Diskominfo Kota', 'status' => 'active']
         );
 
-        $user = User::firstOrCreate(
-            ['email' => 'asset_admin@asetrisk'],
-            ['name' => 'Asset Admin', 'password' => Hash::make('S1pr!ma123')]
+        $user = User::updateOrCreate(
+            ['email' => 'admin_kota@sso'],
+            [
+                'name' => 'Admin Kota',
+                'password' => Hash::make('AdminKota@123'),
+            ]
+        );
+        $user->forceFill(['email_verified_at' => now()])->save();
+
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'admin_kota', 'module' => 'asset_risk'],
+            ['description' => 'Administrator Kota']
         );
 
-        $roles = collect([
-            ['name' => 'asset_admin', 'module' => 'asset_risk', 'description' => 'Asset administrator'],
-            ['name' => 'service_admin', 'module' => 'service_desk', 'description' => 'Service desk administrator'],
-            ['name' => 'change_admin', 'module' => 'change_cfg', 'description' => 'Change administrator'],
-        ])->map(fn($data) => Role::firstOrCreate(
-            ['name' => $data['name'], 'module' => $data['module']],
-            ['description' => $data['description']]
-        ));
+        DB::table('user_roles')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'role_id' => $adminRole->role_id,
+                'tenant_id' => $tenant->tenant_id,
+                'module' => $adminRole->module,
+            ],
+            [
+                'granted_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'deleted_at' => null,
+            ]
+        );
 
-        foreach ($roles as $role) {
+        $ssoAccounts = [
+            [
+                'dinas_id' => 1,
+                'email' => 'staff@sso',
+                'name' => 'Staff',
+                'role' => 'staff',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 2,
+                'email' => 'admin@sso',
+                'name' => 'Admin',
+                'role' => 'admin',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 3,
+                'email' => 'kepala_seksi@sso',
+                'name' => 'Kepala Seksi',
+                'role' => 'kepala_seksi',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 4,
+                'email' => 'kepala_bidang@sso',
+                'name' => 'Kepala Bidang',
+                'role' => 'kepala_bidang',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 5,
+                'email' => 'teknisi@sso',
+                'name' => 'Teknisi',
+                'role' => 'teknisi',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 6,
+                'email' => 'kepala_dinas@sso',
+                'name' => 'Kepala Dinas',
+                'role' => 'kepala_dinas',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 7,
+                'email' => 'diskominfo@sso',
+                'name' => 'Diskominfo',
+                'role' => 'diskominfo',
+                'password' => '12345',
+            ],
+            [
+                'dinas_id' => 8,
+                'email' => 'auditor@sso',
+                'name' => 'Auditor',
+                'role' => 'auditor',
+                'password' => '12345',
+            ],
+        ];
+
+        $roleModule = 'asset_risk';
+        $roleCache = [];
+
+        foreach ($ssoAccounts as $account) {
+            $roleName = $account['role'];
+            if (!isset($roleCache[$roleName])) {
+                $roleCache[$roleName] = Role::firstOrCreate(
+                    ['name' => $roleName, 'module' => $roleModule],
+                    ['description' => ucwords(str_replace('_', ' ', $roleName))]
+                );
+            }
+
+            $accountUser = User::updateOrCreate(
+                ['email' => $account['email']],
+                [
+                    'name' => $account['name'],
+                    'password' => Hash::make($account['password']),
+                ]
+            );
+
+            $accountUser->forceFill(['email_verified_at' => now()])->save();
+
             DB::table('user_roles')->updateOrInsert(
                 [
-                    'user_id' => $user->id,
-                    'role_id' => $role->role_id,
+                    'user_id' => $accountUser->id,
+                    'role_id' => $roleCache[$roleName]->role_id,
                     'tenant_id' => $tenant->tenant_id,
-                    'module' => $role->module,
+                    'module' => $roleCache[$roleName]->module,
                 ],
                 [
                     'granted_at' => now(),

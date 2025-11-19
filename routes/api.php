@@ -24,7 +24,9 @@ Route::prefix('v1')->group(function () {
         // SSO Endpoints - SSO Mitra sebagai IdP untuk aplikasi lain (SIPRIMA, dll)
         Route::get('sso/authorize', [AuthController::class, 'ssoAuthorize']);
         Route::post('sso/token', [AuthController::class, 'ssoToken']);
-        Route::get('sso/userinfo', [AuthController::class, 'ssoUserinfo']);
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('sso/userinfo', [AuthController::class, 'ssoUserinfo']);
+        });
     });
 
     Route::middleware('auth:sanctum')->group(function () {
@@ -42,4 +44,3 @@ Route::prefix('v1')->group(function () {
         Route::get('apps', [AppSelectorController::class, 'index']);
     });
 });
-

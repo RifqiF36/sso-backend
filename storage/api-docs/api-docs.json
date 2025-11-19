@@ -21,7 +21,20 @@
                 "operationId": "SsoMitraAppPicker",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": [
+                                    {
+                                        "code": "asset",
+                                        "name": "Asset Management",
+                                        "url": "http://127.0.0.1:8000",
+                                        "icon": "https://example.com/icons/asset.png"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -50,14 +63,18 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "example": "asset_admin@asetrisk"
+                                        "example": "admin_kota@sso"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "S1pr!ma123"
+                                        "example": "AdminKota@123"
                                     }
                                 },
                                 "type": "object"
+                            },
+                            "example": {
+                                "email": "admin_kota@sso",
+                                "password": "AdminKota@123"
                             }
                         }
                     }
@@ -80,11 +97,11 @@
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Asset Admin"
+                                                    "example": "Admin Kota"
                                                 },
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "asset_admin@asetrisk"
+                                                    "example": "admin_kota@sso"
                                                 },
                                                 "roles": {
                                                     "type": "array",
@@ -92,7 +109,7 @@
                                                         "properties": {
                                                             "role": {
                                                                 "type": "string",
-                                                                "example": "asset_admin"
+                                                                "example": "admin_kota"
                                                             },
                                                             "module": {
                                                                 "type": "string",
@@ -101,6 +118,14 @@
                                                             "tenant_id": {
                                                                 "type": "integer",
                                                                 "example": 1
+                                                            },
+                                                            "granted_at": {
+                                                                "type": "string",
+                                                                "example": "2025-11-15 00:00:00"
+                                                            },
+                                                            "expires_at": {
+                                                                "type": "string",
+                                                                "example": null
                                                             }
                                                         },
                                                         "type": "object"
@@ -151,12 +176,51 @@
                                         }
                                     },
                                     "type": "object"
+                                },
+                                "example": {
+                                    "token": "1|admin-kota-demo-token",
+                                    "user": {
+                                        "id": 1,
+                                        "name": "Admin Kota",
+                                        "email": "admin_kota@sso",
+                                        "roles": [
+                                            {
+                                                "role": "admin_kota",
+                                                "module": "asset_risk",
+                                                "tenant_id": 1,
+                                                "granted_at": "2025-11-15 00:00:00",
+                                                "expires_at": null
+                                            }
+                                        ],
+                                        "tenants": [
+                                            {
+                                                "tenant_id": 1,
+                                                "nama": "Diskominfo Kota",
+                                                "kode": "diskominfo"
+                                            }
+                                        ],
+                                        "apps": [
+                                            {
+                                                "code": "asset",
+                                                "name": "Asset Management",
+                                                "url": "http://127.0.0.1:8000"
+                                            }
+                                        ]
+                                    }
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Invalid credentials"
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Invalid credentials."
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -170,7 +234,15 @@
                 "operationId": "SsoMitraLogout",
                 "responses": {
                     "200": {
-                        "description": "Token revoked"
+                        "description": "Token revoked",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "logged out"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -189,7 +261,38 @@
                 "operationId": "SsoMitraMe",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "id": 1,
+                                    "name": "Admin Kota",
+                                    "email": "admin_kota@sso",
+                                    "roles": [
+                                        {
+                                            "role": "admin_kota",
+                                            "module": "asset_risk",
+                                            "tenant_id": 1
+                                        }
+                                    ],
+                                    "tenants": [
+                                        {
+                                            "tenant_id": 1,
+                                            "nama": "Diskominfo Kota",
+                                            "kode": "diskominfo"
+                                        }
+                                    ],
+                                    "apps": [
+                                        {
+                                            "code": "asset",
+                                            "name": "Asset Management",
+                                            "url": "http://127.0.0.1:8000"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -212,13 +315,28 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "asset_risk"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "roles": [
+                                        {
+                                            "role": "admin_kota",
+                                            "module": "asset_risk",
+                                            "tenant_id": 1
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -237,7 +355,15 @@
                 "operationId": "SsoMitraRefresh",
                 "responses": {
                     "200": {
-                        "description": "Info"
+                        "description": "Info",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Use /auth/login to get a new token"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -274,20 +400,21 @@
                         }
                     },
                     {
-                        "name": "response_type",
+                        "name": "state",
                         "in": "query",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "code"
+                            "example": "state-demo-123"
                         }
                     },
                     {
-                        "name": "state",
+                        "name": "response_type",
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "code"
                         }
                     }
                 ],
@@ -296,34 +423,19 @@
                         "description": "Authorization code berhasil dibuat (valid 5 menit)",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "auth_code": {
-                                                    "type": "string",
-                                                    "example": "xxxxxxxxxxxxxxxx"
-                                                },
-                                                "state": {
-                                                    "type": "string"
-                                                },
-                                                "redirect_uri": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                "schema": {},
+                                "example": {
+                                    "data": {
+                                        "auth_code": "1e1c5e7c1c6d40b0bdb4b7f777281234",
+                                        "state": "state-demo-123",
+                                        "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/sso/callback"
+                                    }
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "Invalid client_id atau redirect_uri tidak sesuai"
-                    },
-                    "401": {
-                        "description": "User belum login"
+                        "description": "Invalid client_id / redirect_uri"
                     }
                 },
                 "security": [
@@ -354,7 +466,7 @@
                                 "properties": {
                                     "code": {
                                         "type": "string",
-                                        "example": "xxxxxxxxxxxxxxxx"
+                                        "example": "1e1c5e7c1c6d40b0bdb4b7f777281234"
                                     },
                                     "client_id": {
                                         "type": "string",
@@ -379,36 +491,22 @@
                         "description": "Access token berhasil dibuat",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "access_token": {
-                                                    "type": "string",
-                                                    "example": "1|xxxxxxxxxxxxxxxxxxxx"
-                                                },
-                                                "token_type": {
-                                                    "type": "string",
-                                                    "example": "Bearer"
-                                                },
-                                                "expires_in": {
-                                                    "type": "integer",
-                                                    "example": 7200
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                "schema": {},
+                                "example": {
+                                    "data": {
+                                        "access_token": "2|external-token-demo",
+                                        "token_type": "Bearer",
+                                        "expires_in": 7200
+                                    }
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "Invalid client_id atau client_secret"
+                        "description": "Invalid client credential"
                     },
                     "401": {
-                        "description": "Authorization code tidak valid atau expired"
+                        "description": "Authorization code tidak valid / expired"
                     }
                 }
             }
@@ -425,33 +523,15 @@
                         "description": "User info berhasil diambil",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "email": {
-                                            "type": "string"
-                                        },
-                                        "roles": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "role": {
-                                                        "type": "string"
-                                                    },
-                                                    "module": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                "schema": {},
+                                "example": {
+                                    "id": 1,
+                                    "username": "admin_kota@sso",
+                                    "email": "admin_kota@sso",
+                                    "name": "Admin Kota",
+                                    "roles": [
+                                        "admin_kota"
+                                    ]
                                 }
                             }
                         }
@@ -479,13 +559,9 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "url": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
+                                "schema": {},
+                                "example": {
+                                    "url": "https://idp.example.com/oauth/authorize?..."
                                 }
                             }
                         }
@@ -506,7 +582,8 @@
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "demo-code"
                         }
                     },
                     {
@@ -514,7 +591,8 @@
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "demo-state"
                         }
                     }
                 ],
@@ -523,19 +601,15 @@
                         "description": "Berhasil autentikasi",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "token": {
-                                            "type": "string"
-                                        },
-                                        "user": {
-                                            "type": "object"
-                                        },
-                                        "provider": {
-                                            "type": "string"
-                                        }
+                                "schema": {},
+                                "example": {
+                                    "token": "3|admin-kota-sso",
+                                    "user": {
+                                        "id": 1,
+                                        "name": "Admin Kota",
+                                        "email": "admin_kota@sso"
                                     },
-                                    "type": "object"
+                                    "provider": "default"
                                 }
                             }
                         }
@@ -562,13 +636,27 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "asset_risk"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": [
+                                    {
+                                        "role_id": 1,
+                                        "name": "admin_kota",
+                                        "module": "asset_risk",
+                                        "description": "Administrator Kota"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -597,26 +685,44 @@
                                 ],
                                 "properties": {
                                     "user_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "role": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "admin_kota"
                                     },
                                     "tenant_id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "module": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "asset_risk"
                                     }
                                 },
                                 "type": "object"
+                            },
+                            "example": {
+                                "user_id": 1,
+                                "role": "admin_kota",
+                                "tenant_id": 1,
+                                "module": "asset_risk"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Role assigned"
+                        "description": "Role assigned",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "role assigned"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -639,13 +745,27 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": [
+                                    {
+                                        "role": "admin_kota",
+                                        "module": "asset_risk",
+                                        "tenant_id": 1,
+                                        "granted_at": "2025-11-15 00:00:00"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -662,9 +782,56 @@
                 ],
                 "summary": "Revoke role dari user",
                 "operationId": "SsoMitraIamRevoke",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "role",
+                                    "tenant_id",
+                                    "module"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "admin_kota"
+                                    },
+                                    "tenant_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "module": {
+                                        "type": "string",
+                                        "example": "asset_risk"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "user_id": 1,
+                                "role": "admin_kota",
+                                "tenant_id": 1,
+                                "module": "asset_risk"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Role revoked"
+                        "description": "Role revoked",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "role revoked"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -683,7 +850,22 @@
                 "operationId": "SsoMitraIamAuditLogs",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": [
+                                    {
+                                        "action": "assign-role",
+                                        "user_id": 1,
+                                        "role": "admin_kota",
+                                        "tenant_id": 1,
+                                        "performed_by": 1,
+                                        "created_at": "2025-11-15 00:00:00"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -702,7 +884,19 @@
                 "operationId": "SsoMitraTenantList",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": [
+                                    {
+                                        "tenant_id": 1,
+                                        "nama": "Diskominfo Kota",
+                                        "kode": "diskominfo"
+                                    }
+                                ]
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -725,13 +919,26 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Tenant switched"
+                        "description": "Tenant switched",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "active_tenant": {
+                                        "tenant_id": 1,
+                                        "nama": "Diskominfo Kota",
+                                        "kode": "diskominfo"
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

@@ -15,13 +15,17 @@ final class AppPaths
      *     security={{"BearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="OK"
+     *         description="OK",
+     *         @OA\JsonContent(example={
+     *             {
+     *                 "code":"asset",
+     *                 "name":"Asset Management",
+     *                 "url":"http://127.0.0.1:8000",
+     *                 "icon":"https://example.com/icons/asset.png"
+     *             }
+     *         })
      *     )
      * )
      */
-    public function list(): void
-    {
-    }
+    public function list(): void {}
 }
-
-

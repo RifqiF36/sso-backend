@@ -15,13 +15,18 @@ final class TenantPaths
      *     security={{"BearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="OK"
+     *         description="OK",
+     *         @OA\JsonContent(example={
+     *             {
+     *                 "tenant_id":1,
+     *                 "nama":"Diskominfo Kota",
+     *                 "kode":"diskominfo"
+     *             }
+     *         })
      *     )
      * )
      */
-    public function listTenants(): void
-    {
-    }
+    public function listTenants(): void {}
 
     /**
      * @OA\Post(
@@ -34,16 +39,20 @@ final class TenantPaths
      *         name="tenant",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Tenant switched"
+     *         description="Tenant switched",
+     *         @OA\JsonContent(example={
+     *             "active_tenant":{
+     *                 "tenant_id":1,
+     *                 "nama":"Diskominfo Kota",
+     *                 "kode":"diskominfo"
+     *             }
+     *         })
      *     )
      * )
      */
-    public function switchTenant(): void
-    {
-    }
+    public function switchTenant(): void {}
 }
-

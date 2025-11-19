@@ -290,7 +290,11 @@ class AuthController extends Controller
         $apps = collect(config('role_apps', []))
             ->filter(function ($appConfig) use ($roles) {
                 $allowedRoles = collect($appConfig['roles'] ?? []);
-                return $allowedRoles->isEmpty() || $allowedRoles->intersect(array_column($roles, 'role'))->isNotEmpty();
+                if ($allowedRoles->isEmpty() || $allowedRoles->contains('*')) {
+                    return true;
+                }
+
+                return $allowedRoles->intersect(array_column($roles, 'role'))->isNotEmpty();
             })
             ->map(function ($appConfig, $code) {
                 return [

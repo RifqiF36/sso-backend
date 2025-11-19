@@ -12,14 +12,20 @@ class AppSelectorController extends Controller
         $roleSlugs = UserContextService::roleSlugs($request->user()->id);
 
         $apps = collect(config('role_apps', []))
-            ->filter(function ($appRoles) use ($roleSlugs) {
-                return collect($appRoles['roles'] ?? [])->intersect($roleSlugs)->isNotEmpty();
+            ->filter(function ($appConfig) use ($roleSlugs) {
+                $allowedRoles = collect($appConfig['roles'] ?? []);
+                if ($allowedRoles->isEmpty() || $allowedRoles->contains('*')) {
+                    return true;
+                }
+
+                return $allowedRoles->intersect($roleSlugs)->isNotEmpty();
             })
             ->map(function ($appConfig, $key) {
                 return [
                     'code' => $key,
                     'name' => $appConfig['name'] ?? $key,
                     'url' => $appConfig['url'] ?? '#',
+                    'description' => $appConfig['description'] ?? null,
                     'icon' => $appConfig['icon'] ?? null,
                 ];
             })
