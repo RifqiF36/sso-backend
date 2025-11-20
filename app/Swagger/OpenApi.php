@@ -11,8 +11,8 @@ use OpenApi\Annotations as OA;
  *     description="Layanan SSO Mitra menggunakan Laravel Sanctum untuk autentikasi dan OAuth2 Authorization Code Grant untuk SSO integration dengan aplikasi klien (SIPRIMA, dsb)."
  * )
  * @OA\Server(
- *     url="http://127.0.0.1:9000",
- *     description="Local SSO Mitra Server"
+ *     url=L5_SWAGGER_CONST_HOST,
+ *     description="Production SSO Mitra Server"
  * )
  * @OA\SecurityScheme(
  *     securityScheme="BearerAuth",
@@ -27,7 +27,4 @@ use OpenApi\Annotations as OA;
  * @OA\Tag(name="IAM", description="IAM/RBAC - manajemen role dan permissions")
  * @OA\Tag(name="App Picker", description="Daftar aplikasi yang bisa diakses user berdasarkan role")
  */
-final class OpenApi
-{
-}
-
+final class OpenApi{}
