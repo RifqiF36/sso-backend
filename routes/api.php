@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppSelectorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IamController;
+use App\Http\Controllers\StaffUserController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,8 @@ Route::prefix('v1')->group(function () {
             Route::get('me', [AuthController::class, 'me']);
             Route::get('roles', [AuthController::class, 'roles']);
             Route::post('refresh', [AuthController::class, 'refresh']);
+            Route::put('profile', [AuthController::class, 'updateProfile']);
+            Route::post('change-password', [AuthController::class, 'changePassword']);
         });
 
         // SSO Internal (dari IdP eksternal - jika ada)
@@ -42,5 +45,6 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::get('apps', [AppSelectorController::class, 'index']);
+        Route::post('staff/users', [StaffUserController::class, 'store']);
     });
 });

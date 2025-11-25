@@ -27,6 +27,15 @@ class IamQuickSeed extends Seeder
             ]
         );
         $user->forceFill(['email_verified_at' => now()])->save();
+        $user->profile()->updateOrCreate(
+            [],
+            [
+                'nip' => '110920479999',
+                'gender' => 'laki_laki',
+                'unit_kerja' => 'Admin Kota Surabaya',
+                'asal_dinas' => 'Diskominfo Kota Surabaya',
+            ]
+        );
 
         $adminRole = Role::firstOrCreate(
             ['name' => 'admin_kota', 'module' => 'asset_risk'],
@@ -50,60 +59,108 @@ class IamQuickSeed extends Seeder
 
         $ssoAccounts = [
             [
-                'dinas_id' => 1,
+                'user_id' => 1,
                 'email' => 'staff@sso',
                 'name' => 'Staff',
                 'role' => 'staff',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920471983',
+                    'gender' => 'laki_laki',
+                    'unit_kerja' => 'Bidang Pencegahan Penyakit',
+                    'asal_dinas' => 'Dinas Kesehatan Provinsi Jawa Timur',
+                ],
             ],
             [
-                'dinas_id' => 2,
+                'user_id' => 2,
                 'email' => 'admin@sso',
                 'name' => 'Admin',
                 'role' => 'admin',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470001',
+                    'gender' => 'laki_laki',
+                    'unit_kerja' => 'Sekretariat Diskominfo',
+                    'asal_dinas' => 'Dinas Komunikasi dan Informatika Surabaya',
+                ],
             ],
             [
-                'dinas_id' => 3,
+                'user_id' => 3,
                 'email' => 'kepala_seksi@sso',
                 'name' => 'Kepala Seksi',
                 'role' => 'kepala_seksi',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470002',
+                    'gender' => 'perempuan',
+                    'unit_kerja' => 'Seksi Infrastruktur',
+                    'asal_dinas' => 'Dinas Kominfo Kota Surabaya',
+                ],
             ],
             [
-                'dinas_id' => 4,
+                'user_id' => 4,
                 'email' => 'kepala_bidang@sso',
                 'name' => 'Kepala Bidang',
                 'role' => 'kepala_bidang',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470003',
+                    'gender' => 'laki_laki',
+                    'unit_kerja' => 'Bidang Operasional',
+                    'asal_dinas' => 'Dinas Kominfo Kota Surabaya',
+                ],
             ],
             [
-                'dinas_id' => 5,
+                'user_id' => 5,
                 'email' => 'teknisi@sso',
                 'name' => 'Teknisi',
                 'role' => 'teknisi',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470004',
+                    'gender' => 'laki_laki',
+                    'unit_kerja' => 'Unit Dukungan Teknis',
+                    'asal_dinas' => 'UPT Pusat Data Surabaya',
+                ],
             ],
             [
-                'dinas_id' => 6,
+                'user_id' => 6,
                 'email' => 'kepala_dinas@sso',
                 'name' => 'Kepala Dinas',
                 'role' => 'kepala_dinas',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470005',
+                    'gender' => 'perempuan',
+                    'unit_kerja' => 'Kepala Dinas Kominfo',
+                    'asal_dinas' => 'Dinas Kominfo Provinsi Jawa Timur',
+                ],
             ],
             [
-                'dinas_id' => 7,
+                'user_id' => 7,
                 'email' => 'diskominfo@sso',
                 'name' => 'Diskominfo',
                 'role' => 'diskominfo',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470006',
+                    'gender' => 'laki_laki',
+                    'unit_kerja' => 'Tim Koordinasi Diskominfo',
+                    'asal_dinas' => 'Dinas Kominfo Kota Surabaya',
+                ],
             ],
             [
-                'dinas_id' => 8,
+                'user_id' => 8,
                 'email' => 'auditor@sso',
                 'name' => 'Auditor',
                 'role' => 'auditor',
                 'password' => '12345',
+                'profile' => [
+                    'nip' => '110920470007',
+                    'gender' => 'perempuan',
+                    'unit_kerja' => 'Unit Audit Internal',
+                    'asal_dinas' => 'Inspektorat Kota Surabaya',
+                ],
             ],
         ];
 
@@ -128,6 +185,15 @@ class IamQuickSeed extends Seeder
             );
 
             $accountUser->forceFill(['email_verified_at' => now()])->save();
+            $accountUser->profile()->updateOrCreate(
+                [],
+                [
+                    'nip' => $account['profile']['nip'] ?? null,
+                    'gender' => $account['profile']['gender'] ?? null,
+                    'unit_kerja' => $account['profile']['unit_kerja'] ?? null,
+                    'asal_dinas' => $account['profile']['asal_dinas'] ?? null,
+                ]
+            );
 
             DB::table('user_roles')->updateOrInsert(
                 [

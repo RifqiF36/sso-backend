@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UserContextService
 {
@@ -67,6 +68,17 @@ class UserContextService
     {
         return self::roles($userId)
             ->pluck('role')
+            ->map(function ($role) {
+                $role = $role ?? '';
+                $role = trim($role);
+
+                if ($role === '') {
+                    return null;
+                }
+
+                return Str::slug($role, '_');
+            })
+            ->filter()
             ->unique()
             ->values()
             ->all();

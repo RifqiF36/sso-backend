@@ -198,11 +198,17 @@ final class AuthPaths
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"code","client_id","client_secret","grant_type"},
+     *             required={"code","client_id","client_secret","grant_type","redirect_uri"},
      *             @OA\Property(property="code", type="string", example="1e1c5e7c1c6d40b0bdb4b7f777281234"),
      *             @OA\Property(property="client_id", type="string", example="siprima-app"),
      *             @OA\Property(property="client_secret", type="string", example="supersecret123"),
-     *             @OA\Property(property="grant_type", type="string", example="authorization_code")
+     *             @OA\Property(property="grant_type", type="string", example="authorization_code"),
+     *             @OA\Property(
+     *                 property="redirect_uri",
+     *                 type="string",
+     *                 example="http://127.0.0.1:8000/api/v1/auth/sso/callback",
+     *                 description="Harus sama dengan redirect URI saat authorize"
+     *             )
      *         )
      *     ),
      *     @OA\Response(

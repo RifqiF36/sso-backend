@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\SsoIdentity;
 use App\Models\SsoProvider;
 use App\Services\UserContextService;
+use App\Services\UserProfileBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -34,7 +35,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user' => $this->buildUserProfile($user),
+            'user' => UserProfileBuilder::build($user),
         ]);
     }
 
@@ -46,7 +47,7 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return response()->json($this->buildUserProfile($request->user()));
+        return response()->json(UserProfileBuilder::build($request->user()));
     }
 
     public function roles(Request $request)
@@ -64,6 +65,60 @@ class AuthController extends Controller
     public function refresh()
     {
         return response()->json(['message' => 'Use /auth/login to get a new token']);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nip' => ['nullable', 'string', 'max:100'],
+            'gender' => ['nullable', 'string', 'max:50'],
+            'unit_kerja' => ['nullable', 'string', 'max:255'],
+            'asal_dinas' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        /** @var User $user */
+        $user = $request->user();
+        $user->forceFill(['name' => $data['name']])->save();
+
+        $user->profile()->updateOrCreate(
+            [],
+            [
+                'nip' => $data['nip'] ?? null,
+                'gender' => $data['gender'] ?? null,
+                'unit_kerja' => $data['unit_kerja'] ?? null,
+                'asal_dinas' => $data['asal_dinas'] ?? null,
+            ]
+        );
+
+        $user->refresh();
+
+        return response()->json([
+            'message' => 'Profil berhasil diperbarui.',
+            'user' => UserProfileBuilder::build($user),
+        ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8'],
+            'confirm_password' => ['required', 'same:new_password'],
+        ]);
+
+        /** @var User $user */
+        $user = $request->user();
+
+        if (!Hash::check($data['current_password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Password saat ini tidak sesuai.'],
+            ])->status(422);
+        }
+
+        $user->forceFill(['password' => Hash::make($data['new_password'])])->save();
+
+        return response()->json(['message' => 'Password berhasil diperbarui.']);
     }
 
     /**
@@ -173,12 +228,14 @@ class AuthController extends Controller
         // Generate access token untuk SIPRIMA
         $user->tokens()->delete();
         $accessToken = $user->createToken('sso-siprima')->plainTextToken;
+        $profile = UserProfileBuilder::build($user);
 
         return response()->json([
             'data' => [
                 'access_token' => $accessToken,
                 'token_type' => 'Bearer',
                 'expires_in' => env('SSO_JWT_EXPIRE', 7200),
+                'profile' => $profile,
             ]
         ]);
     }
@@ -194,12 +251,20 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        $profile = UserProfileBuilder::build($user);
+        $roleNames = collect($profile['roles'])->pluck('role')->all();
+
         return response()->json([
             'id' => $user->id,
             'username' => $user->email,
             'email' => $user->email,
             'name' => $user->name,
-            'roles' => UserContextService::roles($user->id)->pluck('role')->all(),
+            'roles' => $roleNames,
+            'role_details' => $profile['roles'],
+            'role_slugs' => $profile['role_slugs'],
+            'tenants' => $profile['tenants'],
+            'apps' => $profile['apps'],
+            'default_app_routes' => $profile['default_app_routes'],
         ]);
     }
 
@@ -277,44 +342,9 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user' => $this->buildUserProfile($user),
+            'user' => UserProfileBuilder::build($user),
             'provider' => $provider->provider_id,
         ]);
-    }
-
-    private function buildUserProfile(User $user): array
-    {
-        $roles = UserContextService::roles($user->id)->all();
-        $tenants = UserContextService::tenants($user->id)->all();
-
-        $apps = collect(config('role_apps', []))
-            ->filter(function ($appConfig) use ($roles) {
-                $allowedRoles = collect($appConfig['roles'] ?? []);
-                if ($allowedRoles->isEmpty() || $allowedRoles->contains('*')) {
-                    return true;
-                }
-
-                return $allowedRoles->intersect(array_column($roles, 'role'))->isNotEmpty();
-            })
-            ->map(function ($appConfig, $code) {
-                return [
-                    'code' => $code,
-                    'name' => $appConfig['name'] ?? ucfirst($code),
-                    'url' => $appConfig['url'] ?? '#',
-                    'icon' => $appConfig['icon'] ?? null,
-                ];
-            })
-            ->values()
-            ->all();
-
-        return [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'roles' => $roles,
-            'tenants' => $tenants,
-            'apps' => $apps,
-        ];
     }
 }
 
