@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\SsoIdentity;
 use App\Models\SsoProvider;
+use App\Models\User;
 use App\Services\UserContextService;
 use App\Services\UserProfileBuilder;
 use Illuminate\Http\Request;
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -245,26 +246,31 @@ class AuthController extends Controller
      */
     public function ssoUserinfo(Request $request)
     {
-        $user = auth('sanctum')->user();
-
-        if (!$user) {
+        $user = $this->resolveSsoUser($request);
+        if (!$user instanceof User) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         $profile = UserProfileBuilder::build($user);
-        $roleNames = collect($profile['roles'])->pluck('role')->all();
+        $roleNames = collect($profile['roles'] ?? [])
+            ->pluck('role')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
 
         return response()->json([
-            'id' => $user->id,
-            'username' => $user->email,
-            'email' => $user->email,
-            'name' => $user->name,
+            'id' => $profile['id'],
+            'username' => $profile['email'],
+            'email' => $profile['email'],
+            'name' => $profile['name'],
             'roles' => $roleNames,
             'role_details' => $profile['roles'],
             'role_slugs' => $profile['role_slugs'],
             'tenants' => $profile['tenants'],
             'apps' => $profile['apps'],
             'default_app_routes' => $profile['default_app_routes'],
+            'profile' => $profile['profile'],
         ]);
     }
 
@@ -345,6 +351,38 @@ class AuthController extends Controller
             'user' => UserProfileBuilder::build($user),
             'provider' => $provider->provider_id,
         ]);
+    }
+
+    protected function resolveSsoUser(Request $request): ?User
+    {
+        $guardUser = auth('sanctum')->user();
+        if ($guardUser instanceof User) {
+            return $guardUser;
+        }
+
+        $token = $request->bearerToken()
+            ?? $request->input('sso_token')
+            ?? $request->input('token');
+
+        if (!$token) {
+            return null;
+        }
+
+        $accessToken = PersonalAccessToken::findToken($token);
+        if (!$accessToken) {
+            return null;
+        }
+
+        $tokenable = $accessToken->tokenable;
+        if (!$tokenable instanceof User) {
+            return null;
+        }
+
+        if (method_exists($tokenable, 'withAccessToken')) {
+            $tokenable->withAccessToken($accessToken);
+        }
+
+        return $tokenable;
     }
 }
 

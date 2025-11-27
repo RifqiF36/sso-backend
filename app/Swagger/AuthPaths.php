@@ -235,6 +235,13 @@ final class AuthPaths
      *     tags={"SSO"},
      *     summary="Dapatkan informasi user dan roles (untuk keperluan callback client)",
      *     security={{"BearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="sso_token",
+     *         in="query",
+     *         required=false,
+     *         description="Opsional: kirimkan token melalui query jika tidak bisa mengirim header Authorization (alias: token)",
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="User info berhasil diambil",
