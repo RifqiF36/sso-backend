@@ -211,7 +211,7 @@ class IamQuickSeed extends Seeder
             );
         }
 
-        $callback = rtrim(config('app.url', 'http://127.0.0.1:9000'), '/') . '/api/v1/auth/sso/callback';
+        $callback = rtrim(config('app.url', ), '/') . '/api/v1/auth/sso/callback';
 
         SsoProvider::firstOrCreate(
             ['name' => 'default'],
