@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IamController;
 use App\Http\Controllers\StaffUserController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\V2\AuthController as V2AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -44,5 +45,17 @@ Route::prefix('v1')->group(function () {
 
         Route::get('apps', [AppSelectorController::class, 'index']);
         Route::post('staff/users', [StaffUserController::class, 'store']);
+    });
+});
+
+// API V2 Routes
+Route::prefix('v2')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('login', [V2AuthController::class, 'login']);
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('me', [V2AuthController::class, 'me']);
+            Route::post('logout', [V2AuthController::class, 'logout']);
+        });
     });
 });

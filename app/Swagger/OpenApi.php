@@ -11,7 +11,7 @@ use OpenApi\Annotations as OA;
  *     description="Layanan SSO Mitra menggunakan Laravel Sanctum untuk autentikasi dan OAuth2 Authorization Code Grant untuk SSO integration dengan aplikasi klien (SIPRIMA, dsb)."
  * )
  * @OA\Server(
- *     url="https://api.bispro.digitaltech.my.id",
+ *     url=L5_SWAGGER_CONST_HOST,
  *     description="Production SSO Mitra Server"
  * )
  * @OA\SecurityScheme(
@@ -22,6 +22,7 @@ use OpenApi\Annotations as OA;
  *     description="Bearer token dari endpoint login lokal (untuk protected endpoints yang memerlukan auth), atau access token dari OAuth2 token endpoint"
  * )
  * @OA\Tag(name="Auth", description="Autentikasi lokal - login, logout, profil, refresh token")
+ * @OA\Tag(name="Auth V2", description="Authentication V2 - Simplified authentication endpoints")
  * @OA\Tag(name="SSO", description="OAuth2 Authorization Code Grant Flow - authorize, token exchange, userinfo (untuk aplikasi klien seperti SIPRIMA)")
  * @OA\Tag(name="Tenant", description="Manajemen tenant/OPD - daftar dan switch tenant")
  * @OA\Tag(name="IAM", description="IAM/RBAC - manajemen role dan permissions")
