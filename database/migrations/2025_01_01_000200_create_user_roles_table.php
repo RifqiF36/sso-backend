@@ -20,7 +20,7 @@ return new class extends Migration {
 
             $table->unique(['user_id', 'role_id', 'tenant_id', 'module'], 'user_role_unique');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('role_id')->references('role_id')->on('roles')->cascadeOnDelete();
+            $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants')->cascadeOnDelete();
         });
     }

@@ -12,6 +12,11 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('nip')->nullable();
+            $table->enum('jenis_kelamin', ['laki-laki', 'perempuan'])->nullable();
+            $table->foreignId('role_id')->nullable();
+            $table->foreignId('dinas_id')->nullable();
+            $table->foreignId('unit_kerja_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

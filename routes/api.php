@@ -51,10 +51,15 @@ Route::prefix('v1')->group(function () {
 // API V2 Routes
 Route::prefix('v2')->group(function () {
     Route::prefix('auth')->group(function () {
+        Route::post('register', [V2AuthController::class, 'register']);
         Route::post('login', [V2AuthController::class, 'login']);
+        Route::post('verify', [V2AuthController::class, 'verify']);
+        Route::post('reset-password', [V2AuthController::class, 'resetPassword']);
+        Route::post('confirm-reset-password', [V2AuthController::class, 'confirmResetPassword']);
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [V2AuthController::class, 'me']);
+            Route::get('user/{id}', [V2AuthController::class, 'byId']);
             Route::post('logout', [V2AuthController::class, 'logout']);
         });
     });
