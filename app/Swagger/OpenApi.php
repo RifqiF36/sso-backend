@@ -26,5 +26,6 @@ use OpenApi\Annotations as OA;
  * @OA\Tag(name="Tenant", description="Manajemen tenant/OPD - daftar dan switch tenant")
  * @OA\Tag(name="IAM", description="IAM/RBAC - manajemen role dan permissions")
  * @OA\Tag(name="App Picker", description="Daftar aplikasi yang bisa diakses user berdasarkan role")
+ * @OA\Tag(name="Staff", description="Manajemen user oleh staff - membuat akun user baru")
  */
 final class OpenApi{}

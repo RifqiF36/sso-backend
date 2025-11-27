@@ -163,6 +163,98 @@ final class AuthPaths
     public function refresh(): void {}
 
     /**
+     * @OA\Put(
+     *     path="/api/v1/auth/profile",
+     *     operationId="SsoMitraUpdateProfile",
+     *     tags={"Auth"},
+     *     summary="Update profil user",
+     *     security={{"BearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="John Doe Updated"),
+     *             @OA\Property(property="nip", type="string", nullable=true, example="199001012015011001"),
+     *             @OA\Property(property="gender", type="string", nullable=true, example="Laki-laki"),
+     *             @OA\Property(property="unit_kerja", type="string", nullable=true, example="Bidang TIK"),
+     *             @OA\Property(property="asal_dinas", type="string", nullable=true, example="Dinas Komunikasi dan Informatika"),
+     *             example={
+     *                 "name":"John Doe Updated",
+     *                 "nip":"199001012015011001",
+     *                 "gender":"Laki-laki",
+     *                 "unit_kerja":"Bidang TIK",
+     *                 "asal_dinas":"Dinas Komunikasi dan Informatika"
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profil berhasil diupdate",
+     *         @OA\JsonContent(example={
+     *             "message":"Profile updated successfully",
+     *             "user":{
+     *                 "id":1,
+     *                 "name":"John Doe Updated",
+     *                 "email":"admin_kota@sso",
+     *                 "profile":{
+     *                     "nip":"199001012015011001",
+     *                     "gender":"Laki-laki",
+     *                     "unit_kerja":"Bidang TIK",
+     *                     "asal_dinas":"Dinas Komunikasi dan Informatika"
+     *                 }
+     *             }
+     *         })
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
+     */
+    public function updateProfile(): void {}
+
+    /**
+     * @OA\Post(
+     *     path="/api/v1/auth/change-password",
+     *     operationId="SsoMitraChangePassword",
+     *     tags={"Auth"},
+     *     summary="Ubah password user",
+     *     security={{"BearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"current_password","new_password","new_password_confirmation"},
+     *             @OA\Property(property="current_password", type="string", format="password", example="OldPassword123"),
+     *             @OA\Property(property="new_password", type="string", format="password", minLength=8, example="NewPassword123"),
+     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="NewPassword123"),
+     *             example={
+     *                 "current_password":"OldPassword123",
+     *                 "new_password":"NewPassword123",
+     *                 "new_password_confirmation":"NewPassword123"
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password berhasil diubah",
+     *         @OA\JsonContent(example={"message":"Password changed successfully"})
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Current password salah",
+     *         @OA\JsonContent(example={"message":"Current password is incorrect"})
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(example={
+     *             "message":"The new password confirmation does not match.",
+     *             "errors":{
+     *                 "new_password":{"The new password confirmation does not match."}
+     *             }
+     *         })
+     *     )
+     * )
+     */
+    public function changePassword(): void {}
+
+    /**
      * @OA\Get(
      *     path="/api/v1/auth/sso/authorize",
      *     operationId="SsoMitraSsoAuthorize",

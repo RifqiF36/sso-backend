@@ -373,6 +373,182 @@
                 ]
             }
         },
+        "/api/v1/auth/profile": {
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Update profil user",
+                "operationId": "SsoMitraUpdateProfile",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe Updated"
+                                    },
+                                    "nip": {
+                                        "type": "string",
+                                        "example": "199001012015011001",
+                                        "nullable": true
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "example": "Laki-laki",
+                                        "nullable": true
+                                    },
+                                    "unit_kerja": {
+                                        "type": "string",
+                                        "example": "Bidang TIK",
+                                        "nullable": true
+                                    },
+                                    "asal_dinas": {
+                                        "type": "string",
+                                        "example": "Dinas Komunikasi dan Informatika",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "name": "John Doe Updated",
+                                "nip": "199001012015011001",
+                                "gender": "Laki-laki",
+                                "unit_kerja": "Bidang TIK",
+                                "asal_dinas": "Dinas Komunikasi dan Informatika"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profil berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Profile updated successfully",
+                                    "user": {
+                                        "id": 1,
+                                        "name": "John Doe Updated",
+                                        "email": "admin_kota@sso",
+                                        "profile": {
+                                            "nip": "199001012015011001",
+                                            "gender": "Laki-laki",
+                                            "unit_kerja": "Bidang TIK",
+                                            "asal_dinas": "Dinas Komunikasi dan Informatika"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/change-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Ubah password user",
+                "operationId": "SsoMitraChangePassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "OldPassword123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8,
+                                        "example": "NewPassword123"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "NewPassword123"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "current_password": "OldPassword123",
+                                "new_password": "NewPassword123",
+                                "new_password_confirmation": "NewPassword123"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password berhasil diubah",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Password changed successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Current password salah",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Current password is incorrect"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "The new password confirmation does not match.",
+                                    "errors": {
+                                        "new_password": [
+                                            "The new password confirmation does not match."
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/auth/sso/authorize": {
             "get": {
                 "tags": [
@@ -524,6 +700,17 @@
                 ],
                 "summary": "Dapatkan informasi user dan roles (untuk keperluan callback client)",
                 "operationId": "SsoMitraSsoUserinfo",
+                "parameters": [
+                    {
+                        "name": "sso_token",
+                        "in": "query",
+                        "description": "Opsional: kirimkan token melalui query jika tidak bisa mengirim header Authorization (alias: token)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "User info berhasil diambil",
@@ -881,6 +1068,195 @@
                 ]
             }
         },
+        "/api/v1/staff/users": {
+            "post": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Membuat akun user baru (hanya untuk role staff)",
+                "operationId": "SsoMitraStaffCreateUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8,
+                                        "example": "SecurePass123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "admin_opd"
+                                    },
+                                    "nip": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "199001012015011001",
+                                        "nullable": true
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "Laki-laki",
+                                        "nullable": true
+                                    },
+                                    "unit_kerja": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Bidang TIK",
+                                        "nullable": true
+                                    },
+                                    "asal_dinas": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Dinas Komunikasi dan Informatika",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "name": "John Doe",
+                                "email": "john.doe@example.com",
+                                "password": "SecurePass123",
+                                "role": "admin_opd",
+                                "nip": "199001012015011001",
+                                "gender": "Laki-laki",
+                                "unit_kerja": "Bidang TIK",
+                                "asal_dinas": "Dinas Komunikasi dan Informatika"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Akun berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Akun baru berhasil dibuat."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "profile": {
+                                                    "properties": {
+                                                        "nip": {
+                                                            "type": "string",
+                                                            "example": "199001012015011001"
+                                                        },
+                                                        "gender": {
+                                                            "type": "string",
+                                                            "example": "Laki-laki"
+                                                        },
+                                                        "unit_kerja": {
+                                                            "type": "string",
+                                                            "example": "Bidang TIK"
+                                                        },
+                                                        "asal_dinas": {
+                                                            "type": "string",
+                                                            "example": "Dinas Komunikasi dan Informatika"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "roles": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "role": {
+                                                                "type": "string",
+                                                                "example": "admin_opd"
+                                                            },
+                                                            "module": {
+                                                                "type": "string",
+                                                                "example": "asset_risk"
+                                                            },
+                                                            "tenant_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Hanya staff yang dapat menambahkan akun",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Hanya staff yang dapat menambahkan akun."
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "The email has already been taken.",
+                                    "errors": {
+                                        "email": [
+                                            "The email has already been taken."
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/tenants": {
             "get": {
                 "tags": [
@@ -985,6 +1361,10 @@
         {
             "name": "App Picker",
             "description": "Daftar aplikasi yang bisa diakses user berdasarkan role"
+        },
+        {
+            "name": "Staff",
+            "description": "Manajemen user oleh staff - membuat akun user baru"
         }
     ]
 }
