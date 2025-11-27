@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000",
+            "url": "https://api.bispro.digitaltech.my.id/",
             "description": "Production SSO Mitra Server"
         }
     ],
@@ -517,7 +517,7 @@
                                     {
                                         "code": "asset",
                                         "name": "Asset Management",
-                                        "url": "http://127.0.0.1:8000",
+                                        "url": "https://api.bispro.digitaltech.my.id/",
                                         "icon": "https://example.com/icons/asset.png"
                                     }
                                 ]
@@ -653,7 +653,7 @@
                                                             },
                                                             "url": {
                                                                 "type": "string",
-                                                                "example": "http://127.0.0.1:8000"
+                                                                "example": "https://api.bispro.digitaltech.my.id/"
                                                             }
                                                         },
                                                         "type": "object"
@@ -691,7 +691,7 @@
                                             {
                                                 "code": "asset",
                                                 "name": "Asset Management",
-                                                "url": "http://127.0.0.1:8000"
+                                                "url": "https://api.bispro.digitaltech.my.id/"
                                             }
                                         ]
                                     }
@@ -775,7 +775,7 @@
                                         {
                                             "code": "asset",
                                             "name": "Asset Management",
-                                            "url": "http://127.0.0.1:8000"
+                                            "url": "https://api.bispro.digitaltech.my.id/"
                                         }
                                     ]
                                 }
@@ -1060,7 +1060,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "http://127.0.0.1:8000/api/v1/auth/sso/callback"
+                            "example": "https://api.bispro.digitaltech.my.id//api/v1/auth/sso/callback"
                         }
                     },
                     {
@@ -1092,7 +1092,7 @@
                                     "data": {
                                         "auth_code": "1e1c5e7c1c6d40b0bdb4b7f777281234",
                                         "state": "state-demo-123",
-                                        "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/sso/callback"
+                                        "redirect_uri": "https://api.bispro.digitaltech.my.id//api/v1/auth/sso/callback"
                                     }
                                 }
                             }
@@ -1148,7 +1148,7 @@
                                     "redirect_uri": {
                                         "description": "Harus sama dengan redirect URI saat authorize",
                                         "type": "string",
-                                        "example": "http://127.0.0.1:8000/api/v1/auth/sso/callback"
+                                        "example": "https://api.bispro.digitaltech.my.id//api/v1/auth/sso/callback"
                                     }
                                 },
                                 "type": "object"
