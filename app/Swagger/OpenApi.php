@@ -11,7 +11,7 @@ use OpenApi\Annotations as OA;
  *     description="Layanan SSO Mitra menggunakan Laravel Sanctum untuk autentikasi dan OAuth2 Authorization Code Grant untuk SSO integration dengan aplikasi klien (SIPRIMA, dsb)."
  * )
  * @OA\Server(
- *     url=https://api.bispro.digitaltech.my.id,
+ *     url="https://api.bispro.digitaltech.my.id",
  *     description="Production SSO Mitra Server"
  * )
  * @OA\SecurityScheme(
