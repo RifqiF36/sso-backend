@@ -31,5 +31,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
+
+        public function role()
+        {
+            return $this->belongsTo(Role::class, 'role_id');
+        }
+
+        public function dinas()
+        {
+            return $this->belongsTo(Dinas::class, 'dinas_id');
+        }
+
+        public function unitkerja()
+        {
+            return $this->belongsTo(Unitkerja::class, 'unit_kerja_id');
+        }
 }
 
