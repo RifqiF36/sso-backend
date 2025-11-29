@@ -6,14 +6,14 @@ return [
      * Format: 'role_name' => ['app1', 'app2', ...]
      */
     'role_menu_mapping' => [
-        'admin_kota' => ['asset', 'change', 'maintenance'],
-        'kepala_dinas' => ['change'],
-        'admin_dinas' => ['asset', 'change', 'maintenance'],
-        'kepala_bidang' => ['change', 'maintenance'],
-        'kepala_seksi' => ['asset', 'change', 'maintenance'],
-        'auditor' => ['change', 'asset'],
-        'teknisi' => ['maintenance'],
-        'staff' => ['asset', 'change', 'maintenance'],
+        'admin_kota' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
+        'kepala_dinas' => ['change'], // simantic
+        'admin_dinas' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
+        'kepala_bidang' => ['change', 'maintenance'], // simantic, sindra
+        'kepala_seksi' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
+        'auditor' => ['change', 'asset'], // simantic, siprima
+        'teknisi' => ['maintenance'], // sindra
+        'staff' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
     ],
 
     /**

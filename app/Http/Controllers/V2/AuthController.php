@@ -45,16 +45,34 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->find(Auth::id());
 
-        // Get menu based on user role
-        $menu = MenuService::getMenuByRole($user->role);
+        $user = User::with(['role', 'dinas', 'unitkerja'])->find(Auth::id());
+
+        // Ambil nama role (string) untuk mapping menu
+        $roleName = $user->role ? $user->role->name : null;
+        $menu = MenuService::getMenuByRole($roleName);
+
+        // Tampilkan menu sesuai format lama (pakai array asli, bukan hanya nama)
+        $menuList = $menu;
 
         return response()->json([
             'success' => true,
             'data' => [
-                'user' => $user,
-                'menu' => $menu
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'nip' => $user->nip,
+                    'jenis_kelamin' => $user->jenis_kelamin,
+                    'role' => $user->role ? $user->role->name : null,
+                    'dinas' => $user->dinas ? $user->dinas->name : null,
+                    'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'deleted_at' => $user->deleted_at,
+                ],
+                'menu' => $menuList
             ]
         ]);
     }
@@ -88,7 +106,7 @@ class AuthController extends Controller
      */
     public function byId($id)
     {
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->find($id);
+        $user = User::with(['role', 'dinas', 'unitkerja', ])->find($id);
 
         if (!$user) {
             return response()->json([
@@ -99,7 +117,20 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'nip' => $user->nip,
+                'jenis_kelamin' => $user->jenis_kelamin,
+                'role' => $user->role ? $user->role->name : null,
+                'dinas' => $user->dinas ? $user->dinas->name : null,
+                'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'deleted_at' => $user->deleted_at,
+            ]
         ]);
     }
 
@@ -116,8 +147,8 @@ class AuthController extends Controller
         * required=true,
         * @OA\JsonContent(
         * required={"email","password"},
-        * @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
-        * @OA\Property(property="password", type="string", format="password", example="Password123")
+        * @OA\Property(property="email", type="string", format="email", example="admin.kota@example.com"),
+        * @OA\Property(property="password", type="string", format="password", example="password123")
         * )
         * ),
         * @OA\Response(
@@ -140,7 +171,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->where('email', $request->email)->first();
+        $user = User::with(['role', 'dinas', 'unitkerja'])->where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -164,7 +195,20 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'data' => [
                 'token' => $token,
-                'user' => $user
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'nip' => $user->nip,
+                    'jenis_kelamin' => $user->jenis_kelamin,
+                    'role' => $user->role ? $user->role->name : null,
+                    'dinas' => $user->dinas ? $user->dinas->name : null,
+                    'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'deleted_at' => $user->deleted_at,
+                ]
             ]
         ]);
     }
@@ -219,7 +263,7 @@ class AuthController extends Controller
             'nip' => $request->nip,
             'phone' => $request->phone,
         ]);
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->find($user->id);
+        $user = User::with(['role', 'dinas', 'unitkerja', ])->find($user->id);
 
         // Generate OTP for email verification
         $otpCode = rand(100000, 999999);
@@ -237,7 +281,20 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Registration successful. Please check your email for verification code.',
             'data' => [
-                'user' => $user
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'nip' => $user->nip,
+                    'jenis_kelamin' => $user->jenis_kelamin,
+                    'role' => $user->role ? $user->role->name : null,
+                    'dinas' => $user->dinas ? $user->dinas->name : null,
+                    'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'deleted_at' => $user->deleted_at,
+                ]
             ]
         ], 201);
     }
@@ -292,7 +349,7 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->where('email', $request->email)->first();
+        $user = User::with(['role', 'dinas', 'unitkerja', ])->where('email', $request->email)->first();
         
         if (!$user) {
             return response()->json([
@@ -316,7 +373,20 @@ class AuthController extends Controller
             'message' => 'Email verified successfully',
             'data' => [
                 'token' => $token,
-                'user' => $user
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'nip' => $user->nip,
+                    'jenis_kelamin' => $user->jenis_kelamin,
+                    'role' => $user->role ? $user->role->name : null,
+                    'dinas' => $user->dinas ? $user->dinas->name : null,
+                    'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                    'email_verified_at' => $user->email_verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'deleted_at' => $user->deleted_at,
+                ]
             ]
         ]);
     }
@@ -386,7 +456,7 @@ class AuthController extends Controller
             'email' => 'required|email',
         ]);
 
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->where('email', $request->email)->first();
+        $user = User::with(['role', 'dinas', 'unitkerja', ])->where('email', $request->email)->first();
 
         if (!$user) {
             return response()->json([
@@ -465,7 +535,7 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $user = User::with(['role', 'dinas', 'unitkerja', 'profile'])->where('email', $request->email)->first();
+        $user = User::with(['role', 'dinas', 'unitkerja', ])->where('email', $request->email)->first();
 
         if (!$user) {
             return response()->json([

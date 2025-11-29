@@ -56,7 +56,7 @@ return [
         'maintenance' => [
             'name' => 'Service Desk',
             'url' => env('APP_SERVICE_DESK_URL', 'http://127.0.0.1:8000'),
-            'roles' => ['*'],
+            'roles' => ['staff', 'admin_kota', 'admin_dinas', 'kepala_seksi', 'kepala_bidang', 'teknisi'],
             'default_route' => '/',
             'role_urls' => [
                 'staff' => env('APP_SERVICE_DESK_URL_STAFF', env('APP_SERVICE_DESK_URL', 'http://127.0.0.1:8000')),

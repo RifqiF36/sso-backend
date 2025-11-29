@@ -9,7 +9,7 @@ class Role extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'role_id';
+    // Gunakan default primaryKey 'id' sesuai migration
 
     protected $fillable = [
         'name',
