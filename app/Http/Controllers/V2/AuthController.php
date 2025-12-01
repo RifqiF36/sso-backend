@@ -78,6 +78,52 @@ class AuthController extends Controller
     }
 
     /**
+     * Get all users
+        *
+        * @OA\Get(
+        * path="/api/v2/auth/users",
+        * operationId="AuthV2GetAllUsers",
+        * tags={"Auth V2"},
+        * summary="Get all users",
+        * security={{"BearerAuth":{}}},
+        * @OA\Response(
+        * response=200,
+        * description="Success",
+        * @OA\JsonContent(
+        * @OA\Property(property="success", type="boolean", example=true),
+        * @OA\Property(property="data", type="array", @OA\Items(type="object"))
+        * )
+        * )
+        * )
+     */
+    public function getAllUsers()
+    {
+        $users = User::with(['role', 'dinas', 'unitkerja'])->get();
+
+        $userData = $users->map(function($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'nip' => $user->nip,
+                'jenis_kelamin' => $user->jenis_kelamin,
+                'role' => $user->role ? $user->role->name : null,
+                'dinas' => $user->dinas ? $user->dinas->name : null,
+                'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'deleted_at' => $user->deleted_at,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $userData
+        ]);
+    }
+
+    /**
      * Get user by ID
         *
         * @OA\Get(
@@ -121,6 +167,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'nip' => $user->nip,
                 'jenis_kelamin' => $user->jenis_kelamin,
                 'role' => $user->role ? $user->role->name : null,
@@ -131,6 +178,167 @@ class AuthController extends Controller
                 'updated_at' => $user->updated_at,
                 'deleted_at' => $user->deleted_at,
             ]
+        ]);
+    }
+
+    /**
+     * Update user data
+        *
+        * @OA\Put(
+        * path="/api/v2/auth/user/{id}",
+        * operationId="AuthV2UpdateUser",
+        * tags={"Auth V2"},
+        * summary="Update user data",
+        * security={{"BearerAuth":{}}},
+        * @OA\Parameter(
+        * name="id",
+        * in="path",
+        * required=true,
+        * description="User ID",
+        * @OA\Schema(type="integer", example=1)
+        * ),
+        * @OA\RequestBody(
+        * required=true,
+        * @OA\JsonContent(
+        * @OA\Property(property="name", type="string", example="John Doe Updated"),
+        * @OA\Property(property="email", type="string", format="email", example="john.updated@example.com"),
+        * @OA\Property(property="phone", type="string", example="081234567890"),
+        * @OA\Property(property="nip", type="string", example="199001012020011001"),
+        * @OA\Property(property="jenis_kelamin", type="string", enum={"laki-laki", "perempuan"}, example="laki-laki"),
+        * @OA\Property(property="role_id", type="integer", example=1),
+        * @OA\Property(property="dinas_id", type="integer", example=1),
+        * @OA\Property(property="unit_kerja_id", type="integer", example=1)
+        * )
+        * ),
+        * @OA\Response(
+        * response=200,
+        * description="User updated successfully",
+        * @OA\JsonContent(
+        * @OA\Property(property="success", type="boolean", example=true),
+        * @OA\Property(property="message", type="string", example="User updated successfully"),
+        * @OA\Property(property="data", type="object")
+        * )
+        * ),
+        * @OA\Response(response=404, description="User not found"),
+        * @OA\Response(response=422, description="Validation error")
+        * )
+     */
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $id,
+            'phone' => 'nullable|string|max:20',
+            'nip' => 'nullable|string|max:50',
+            'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
+            'role_id' => 'nullable|exists:roles,id',
+            'dinas_id' => 'nullable|exists:dinas,id',
+            'unit_kerja_id' => 'nullable|exists:unitkerjas,id',
+        ]);
+
+        // Update only provided fields
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+        if ($request->has('phone')) {
+            $user->phone = $request->phone;
+        }
+        if ($request->has('nip')) {
+            $user->nip = $request->nip;
+        }
+        if ($request->has('jenis_kelamin')) {
+            $user->jenis_kelamin = $request->jenis_kelamin;
+        }
+        if ($request->has('role_id')) {
+            $user->role_id = $request->role_id;
+        }
+        if ($request->has('dinas_id')) {
+            $user->dinas_id = $request->dinas_id;
+        }
+        if ($request->has('unit_kerja_id')) {
+            $user->unit_kerja_id = $request->unit_kerja_id;
+        }
+
+        $user->save();
+        $user = User::with(['role', 'dinas', 'unitkerja'])->find($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'nip' => $user->nip,
+                'jenis_kelamin' => $user->jenis_kelamin,
+                'role' => $user->role ? $user->role->name : null,
+                'dinas' => $user->dinas ? $user->dinas->name : null,
+                'unit_kerja' => $user->unitkerja ? $user->unitkerja->name : null,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'deleted_at' => $user->deleted_at,
+            ]
+        ]);
+    }
+
+    /**
+     * Delete user (soft delete)
+        *
+        * @OA\Delete(
+        * path="/api/v2/auth/user/{id}",
+        * operationId="AuthV2DeleteUser",
+        * tags={"Auth V2"},
+        * summary="Delete user (soft delete)",
+        * security={{"BearerAuth":{}}},
+        * @OA\Parameter(
+        * name="id",
+        * in="path",
+        * required=true,
+        * description="User ID",
+        * @OA\Schema(type="integer", example=1)
+        * ),
+        * @OA\Response(
+        * response=200,
+        * description="User deleted successfully",
+        * @OA\JsonContent(
+        * @OA\Property(property="success", type="boolean", example=true),
+        * @OA\Property(property="message", type="string", example="User deleted successfully")
+        * )
+        * ),
+        * @OA\Response(response=404, description="User not found")
+        * )
+     */
+    public function deleteUser($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Soft delete
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User deleted successfully'
         ]);
     }
 
@@ -225,13 +433,17 @@ class AuthController extends Controller
         * @OA\RequestBody(
         * required=true,
         * @OA\JsonContent(
-        * required={"name","email","password","password_confirmation"},
+        * required={"name","email","password","password_confirmation","jenis_kelamin","phone"},
         * @OA\Property(property="name", type="string", example="John Doe"),
         * @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
         * @OA\Property(property="password", type="string", format="password", minLength=8, example="Password123"),
         * @OA\Property(property="password_confirmation", type="string", format="password", example="Password123"),
+        * @OA\Property(property="jenis_kelamin", type="string", enum={"laki-laki", "perempuan"}, example="laki-laki"),
+        * @OA\Property(property="phone", type="string", example="081234567890"),
         * @OA\Property(property="nip", type="string", nullable=true, example="199001012020011001"),
-        * @OA\Property(property="phone", type="string", nullable=true, example="081234567890")
+        * @OA\Property(property="role_id", type="integer", nullable=true, description="Role ID (optional, default to staff role if not provided)", example=1),
+        * @OA\Property(property="dinas_id", type="integer", nullable=true, description="Dinas ID (optional)", example=1),
+        * @OA\Property(property="unit_kerja_id", type="integer", nullable=true, description="Unit Kerja ID (optional)", example=1)
         * )
         * ),
         * @OA\Response(
@@ -252,25 +464,39 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+            'phone' => 'required|string|max:20',
             'nip' => 'nullable|string|max:50',
-            'phone' => 'nullable|string|max:20',
+            'role_id' => 'nullable|exists:roles,id',
+            'dinas_id' => 'nullable|exists:dinas,id',
+            'unit_kerja_id' => 'nullable|exists:unitkerjas,id',
         ]);
+
+        // Jika role_id tidak diberikan, set default ke role 'staff'
+        $roleId = $request->role_id;
+        if (!$roleId) {
+            $defaultRole = \App\Models\Role::where('name', 'staff')->first();
+            $roleId = $defaultRole ? $defaultRole->id : null;
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'nip' => $request->nip,
+            'jenis_kelamin' => $request->jenis_kelamin,
             'phone' => $request->phone,
+            'nip' => $request->nip,
+            'role_id' => $roleId,
+            'dinas_id' => $request->dinas_id,
+            'unit_kerja_id' => $request->unit_kerja_id,
         ]);
-        $user = User::with(['role', 'dinas', 'unitkerja', ])->find($user->id);
+        $user = User::with(['role', 'dinas', 'unitkerja'])->find($user->id);
 
         // Generate OTP for email verification
         $otpCode = rand(100000, 999999);
         Otp::create([
             'user_id' => $user->id,
-            'email' => $user->email,
-            'otp' => $otpCode,
+            'otp_code' => (string)$otpCode,
             'expires_at' => now()->addMinutes(10),
         ]);
 
@@ -336,10 +562,20 @@ class AuthController extends Controller
             'otp' => 'required|string|size:6',
         ]);
 
-        $otp = Otp::where('email', $request->email)
-            ->where('otp', $request->otp)
+        // Find user first
+        $user = User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Find OTP by user_id and otp_code
+        $otp = Otp::where('user_id', $user->id)
+            ->where('otp_code', $request->otp)
             ->where('expires_at', '>', now())
-            ->where('verified_at', null)
             ->first();
 
         if (!$otp) {
@@ -349,7 +585,7 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $user = User::with(['role', 'dinas', 'unitkerja', ])->where('email', $request->email)->first();
+        $user = User::with(['role', 'dinas', 'unitkerja'])->find($user->id);
         
         if (!$user) {
             return response()->json([
@@ -362,9 +598,8 @@ class AuthController extends Controller
         $user->email_verified_at = now();
         $user->save();
 
-        // Mark OTP as verified
-        $otp->verified_at = now();
-        $otp->save();
+        // Delete OTP after verification
+        $otp->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -469,8 +704,7 @@ class AuthController extends Controller
         $otpCode = rand(100000, 999999);
         Otp::create([
             'user_id' => $user->id,
-            'email' => $user->email,
-            'otp' => $otpCode,
+            'otp_code' => (string)$otpCode,
             'expires_at' => now()->addMinutes(10),
         ]);
 
@@ -522,10 +756,20 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $otp = Otp::where('email', $request->email)
-            ->where('otp', $request->otp)
+        // Find user first
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Find OTP by user_id and otp_code
+        $otp = Otp::where('user_id', $user->id)
+            ->where('otp_code', $request->otp)
             ->where('expires_at', '>', now())
-            ->where('verified_at', null)
             ->first();
 
         if (!$otp) {
@@ -535,22 +779,12 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $user = User::with(['role', 'dinas', 'unitkerja', ])->where('email', $request->email)->first();
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
-
         // Update password
         $user->password = Hash::make($request->password);
         $user->save();
 
-        // Mark OTP as verified
-        $otp->verified_at = now();
-        $otp->save();
+        // Delete OTP after use
+        $otp->delete();
 
         // Revoke all tokens
         $user->tokens()->delete();

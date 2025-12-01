@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000",
+            "url": "https://api.bispro.digitaltech.my.id",
             "description": "Production SSO Mitra Server"
         }
     ],
@@ -59,6 +59,45 @@
                 ]
             }
         },
+        "/api/v2/auth/users": {
+            "get": {
+                "tags": [
+                    "Auth V2"
+                ],
+                "summary": "Get all users",
+                "description": "Get all users",
+                "operationId": "AuthV2GetAllUsers",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v2/auth/user/{id}": {
             "get": {
                 "tags": [
@@ -92,6 +131,161 @@
                                         },
                                         "data": {
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Auth V2"
+                ],
+                "summary": "Update user data",
+                "description": "Update user data",
+                "operationId": "AuthV2UpdateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.updated@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    },
+                                    "nip": {
+                                        "type": "string",
+                                        "example": "199001012020011001"
+                                    },
+                                    "jenis_kelamin": {
+                                        "type": "string",
+                                        "enum": [
+                                            "laki-laki",
+                                            "perempuan"
+                                        ],
+                                        "example": "laki-laki"
+                                    },
+                                    "role_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dinas_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "unit_kerja_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User updated successfully"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Auth V2"
+                ],
+                "summary": "Delete user (soft delete)",
+                "description": "Delete user (soft delete)",
+                "operationId": "AuthV2DeleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted successfully"
                                         }
                                     },
                                     "type": "object"
@@ -194,7 +388,9 @@
                                     "name",
                                     "email",
                                     "password",
-                                    "password_confirmation"
+                                    "password_confirmation",
+                                    "jenis_kelamin",
+                                    "phone"
                                 ],
                                 "properties": {
                                     "name": {
@@ -217,14 +413,39 @@
                                         "format": "password",
                                         "example": "Password123"
                                     },
+                                    "jenis_kelamin": {
+                                        "type": "string",
+                                        "enum": [
+                                            "laki-laki",
+                                            "perempuan"
+                                        ],
+                                        "example": "laki-laki"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    },
                                     "nip": {
                                         "type": "string",
                                         "example": "199001012020011001",
                                         "nullable": true
                                     },
-                                    "phone": {
-                                        "type": "string",
-                                        "example": "081234567890",
+                                    "role_id": {
+                                        "description": "Role ID (optional, default to staff role if not provided)",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "dinas_id": {
+                                        "description": "Dinas ID (optional)",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "unit_kerja_id": {
+                                        "description": "Unit Kerja ID (optional)",
+                                        "type": "integer",
+                                        "example": 1,
                                         "nullable": true
                                     }
                                 },
@@ -496,6 +717,108 @@
                     },
                     "404": {
                         "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/v2/master/unit-kerja": {
+            "get": {
+                "tags": [
+                    "Master Data V2"
+                ],
+                "summary": "Get all unit kerja",
+                "description": "Get all unit kerja",
+                "operationId": "MasterDataV2GetAllUnitKerja",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/master/dinas": {
+            "get": {
+                "tags": [
+                    "Master Data V2"
+                ],
+                "summary": "Get all dinas",
+                "description": "Get all dinas",
+                "operationId": "MasterDataV2GetAllDinas",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/master/roles": {
+            "get": {
+                "tags": [
+                    "Master Data V2"
+                ],
+                "summary": "Get all roles",
+                "description": "Get all roles",
+                "operationId": "MasterDataV2GetAllRoles",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1833,6 +2156,10 @@
         {
             "name": "Auth V2",
             "description": "Authentication V2 - Simplified authentication endpoints"
+        },
+        {
+            "name": "Master Data V2",
+            "description": "Master Data API - Get all unit kerja, dinas, and roles"
         },
         {
             "name": "Auth",

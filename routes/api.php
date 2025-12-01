@@ -6,6 +6,7 @@ use App\Http\Controllers\IamController;
 use App\Http\Controllers\StaffUserController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\V2\AuthController as V2AuthController;
+use App\Http\Controllers\V2\MasterDataController as V2MasterDataController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -59,8 +60,18 @@ Route::prefix('v2')->group(function () {
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [V2AuthController::class, 'me']);
+            Route::get('users', [V2AuthController::class, 'getAllUsers']);
             Route::get('user/{id}', [V2AuthController::class, 'byId']);
+            Route::put('user/{id}', [V2AuthController::class, 'updateUser']);
+            Route::delete('user/{id}', [V2AuthController::class, 'deleteUser']);
             Route::post('logout', [V2AuthController::class, 'logout']);
         });
+    });
+
+    // Master Data Routes
+    Route::prefix('master')->group(function () {
+        Route::get('unit-kerja', [V2MasterDataController::class, 'getAllUnitKerja']);
+        Route::get('dinas', [V2MasterDataController::class, 'getAllDinas']);
+        Route::get('roles', [V2MasterDataController::class, 'getAllRoles']);
     });
 });
