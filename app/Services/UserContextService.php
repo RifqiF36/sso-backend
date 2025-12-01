@@ -12,7 +12,7 @@ class UserContextService
     public static function roles(int $userId, ?string $module = null): Collection
     {
         return DB::table('user_roles')
-            ->join('roles', 'roles.role_id', '=', 'user_roles.role_id')
+            ->join('roles', 'roles.id', '=', 'user_roles.role_id')
             ->select([
                 'roles.name as role',
                 'roles.module',

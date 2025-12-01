@@ -26,7 +26,7 @@ class IamController extends Controller
     public function userRoles(Request $request, int $userId)
     {
         $rows = DB::table('user_roles')
-            ->join('roles', 'roles.role_id', '=', 'user_roles.role_id')
+            ->join('roles', 'roles.id', '=', 'user_roles.role_id')
             ->join('tenants', 'tenants.tenant_id', '=', 'user_roles.tenant_id')
             ->where('user_roles.user_id', $userId)
             ->whereNull('user_roles.deleted_at')

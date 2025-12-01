@@ -18,12 +18,32 @@
             <input type="email" id="email" name="email" required autofocus>
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <div style="display:flex; gap:.5rem; align-items:center;">
+                <input type="password" id="password" name="password" required style="flex:1;">
+                <button type="button" id="togglePassword" data-visible="false">Intip</button>
+            </div>
 
             <button type="submit">Masuk</button>
         </form>
     </article>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        if (!toggle || !passwordInput) {
+            return;
+        }
+
+        toggle.addEventListener('click', function () {
+            const isVisible = toggle.getAttribute('data-visible') === 'true';
+            passwordInput.type = isVisible ? 'password' : 'text';
+            toggle.setAttribute('data-visible', (!isVisible).toString());
+            toggle.textContent = isVisible ? 'Intip' : 'Sembunyikan';
+        });
+    });
+</script>
 </body>
 </html>
 

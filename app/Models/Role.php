@@ -9,8 +9,6 @@ class Role extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'role_id';
-
     protected $fillable = [
         'name',
         'module',

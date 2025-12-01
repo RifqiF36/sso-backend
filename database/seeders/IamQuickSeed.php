@@ -45,7 +45,7 @@ class IamQuickSeed extends Seeder
         DB::table('user_roles')->updateOrInsert(
             [
                 'user_id' => $user->id,
-                'role_id' => $adminRole->role_id,
+                'role_id' => $adminRole->id,
                 'tenant_id' => $tenant->tenant_id,
                 'module' => $adminRole->module,
             ],
@@ -140,7 +140,7 @@ class IamQuickSeed extends Seeder
                 'user_id' => 7,
                 'email' => 'diskominfo@sso',
                 'name' => 'Diskominfo',
-                'role' => 'diskominfo',
+                'role' => 'admin_kota',
                 'password' => '12345',
                 'profile' => [
                     'nip' => '110920470006',
@@ -198,7 +198,7 @@ class IamQuickSeed extends Seeder
             DB::table('user_roles')->updateOrInsert(
                 [
                     'user_id' => $accountUser->id,
-                    'role_id' => $roleCache[$roleName]->role_id,
+                    'role_id' => $roleCache[$roleName]->id,
                     'tenant_id' => $tenant->tenant_id,
                     'module' => $roleCache[$roleName]->module,
                 ],
@@ -228,4 +228,3 @@ class IamQuickSeed extends Seeder
         );
     }
 }
-

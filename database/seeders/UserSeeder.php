@@ -38,6 +38,7 @@ class UserSeeder extends Seeder
             'Unit Audit dan Pengawasan' => Unitkerja::where('name', 'Unit Audit dan Pengawasan')->first(),
             'Unit Dukungan Teknis' => Unitkerja::where('name', 'Unit Dukungan Teknis')->first(),
             'Bidang Administrasi' => Unitkerja::where('name', 'Bidang Administrasi')->first(),
+            'Bidang Layanan Informasi' => Unitkerja::where('name', 'Bidang Layanan Informasi')->first(),
         ];
 
         // Get Roles
@@ -49,6 +50,7 @@ class UserSeeder extends Seeder
             'auditor' => Role::where('name', 'auditor')->where('module', 'asset_risk')->first(),
             'teknisi' => Role::where('name', 'teknisi')->where('module', 'asset_risk')->first(),
             'staff' => Role::where('name', 'staff')->where('module', 'asset_risk')->first(),
+            'kepala_bidang' => Role::where('name', 'kepala_bidang')->where('module', 'asset_risk')->first(),
         ];
 
         // Create Users
@@ -122,6 +124,16 @@ class UserSeeder extends Seeder
                 'role' => 'staff',
                 'dinas' => $dinasKominfo,
                 'unit_kerja' => 'Bidang Administrasi',
+            ],
+            [
+                'name' => 'Kepala Bidang',
+                'email' => 'kepala.bidang@example.com',
+                'password' => 'password123',
+                'nip' => '198112052006021002',
+                'jenis_kelamin' => 'laki-laki',
+                'role' => 'kepala_bidang',
+                'dinas' => $dinasKominfo,
+                'unit_kerja' => 'Bidang Layanan Informasi',
             ],
         ];
 

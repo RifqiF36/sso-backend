@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Otp;
@@ -46,16 +48,18 @@ class AuthController extends Controller
     public function me()
     {
         $user = Auth::user();
-        
-        // Get menu based on user role
-        $menu = MenuService::getMenuByRole($user->role);
+
+        $roleData = $this->resolveRoleData($user);
+
+        // Get menu based on resolved role name
+        $menu = MenuService::getMenuByRole($roleData['name'] ?? null);
 
         return response()->json([
             'success' => true,
             'data' => [
-                'user' => $user,
-                'menu' => $menu
-            ]
+                'user' => $this->formatUserResponse($user, $roleData),
+                'menu' => $menu,
+            ],
         ]);
     }
 
@@ -488,5 +492,77 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Password reset successfully'
         ]);
+    }
+
+    /**
+     * Resolve role information for authenticated user.
+     */
+    private function resolveRoleData(User $user): array
+    {
+        $roleId = $user->role_id;
+        $roleName = $user->role;
+
+        if ($roleId && $roleName) {
+            return ['id' => $roleId, 'name' => $roleName];
+        }
+
+        if ($roleId && !$roleName) {
+            $roleName = DB::table('roles')->where('id', $roleId)->value('name');
+            return ['id' => $roleId, 'name' => $roleName];
+        }
+
+        $roleRow = DB::table('user_roles')
+            ->join('roles', 'roles.id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $user->id)
+            ->whereNull('user_roles.deleted_at')
+            ->orderByDesc('user_roles.created_at')
+            ->select('roles.id as id', 'roles.name as name')
+            ->first();
+
+        return [
+            'id' => optional($roleRow)->id,
+            'name' => optional($roleRow)->name,
+        ];
+    }
+
+    /**
+     * Format user payload to match the desired response structure.
+     */
+    private function formatUserResponse(User $user, array $roleData): array
+    {
+        $verifiedAt = $user->email_verified_at
+            ? Carbon::parse($user->email_verified_at)
+            : null;
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'nip' => $user->nip,
+            'jenis_kelamin' => $user->jenis_kelamin,
+            'role_id' => $roleData['id'] ?? null,
+            'role' => $this->formatRoleSlug($roleData['name'] ?? null),
+            'dinas_id' => $user->dinas_id,
+            'unit_kerja_id' => $user->unit_kerja_id,
+            'email_verified_at' => $verifiedAt?->format('Y-m-d H:i:s'),
+            'created_at' => optional($user->created_at)?->toISOString(),
+            'updated_at' => optional($user->updated_at)?->toISOString(),
+            'deleted_at' => optional($user->deleted_at)?->toISOString(),
+        ];
+    }
+
+    /**
+     * Normalize role name to kebab-case for API responses.
+     */
+    private function formatRoleSlug(?string $roleName): ?string
+    {
+        if (!$roleName) {
+            return null;
+        }
+
+        $slug = strtolower($roleName);
+        $slug = str_replace([' ', '_'], '-', $slug);
+
+        return $slug;
     }
 }

@@ -48,6 +48,11 @@ class RoleSeeder extends Seeder
                 'module' => 'asset_risk',
                 'description' => 'Staff',
             ],
+            [
+                'name' => 'kepala_bidang',
+                'module' => 'asset_risk',
+                'description' => 'Kepala Bidang',
+            ],
         ];
 
         foreach ($roles as $role) {

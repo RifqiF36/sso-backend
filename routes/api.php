@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::get('apps', [AppSelectorController::class, 'index']);
+        Route::get('staff/users', [StaffUserController::class, 'index']);
         Route::post('staff/users', [StaffUserController::class, 'store']);
     });
 });
