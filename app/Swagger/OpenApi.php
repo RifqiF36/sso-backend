@@ -6,27 +6,22 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
- *     title="SSO Mitra • Identity Provider & OAuth2 Authorization Server",
- *     version="1.0.0",
- *     description="Layanan SSO Mitra menggunakan Laravel Sanctum untuk autentikasi dan OAuth2 Authorization Code Grant untuk SSO integration dengan aplikasi klien (SIPRIMA, dsb)."
+ *     title="SSO Backend API V2",
+ *     version="2.0.0",
+ *     description="SSO Backend API Documentation - V2 Only"
  * )
  * @OA\Server(
  *     url=L5_SWAGGER_CONST_HOST,
- *     description="Production SSO Mitra Server"
+ *     description="SSO Backend Server"
  * )
  * @OA\SecurityScheme(
  *     securityScheme="BearerAuth",
  *     type="http",
  *     scheme="bearer",
  *     bearerFormat="Sanctum",
- *     description="Bearer token dari endpoint login lokal (untuk protected endpoints yang memerlukan auth), atau access token dari OAuth2 token endpoint"
+ *     description="Bearer token from login endpoint"
  * )
- * @OA\Tag(name="Auth", description="Autentikasi lokal - login, logout, profil, refresh token")
- * @OA\Tag(name="Auth V2", description="Authentication V2 - Simplified authentication endpoints")
- * @OA\Tag(name="SSO", description="OAuth2 Authorization Code Grant Flow - authorize, token exchange, userinfo (untuk aplikasi klien seperti SIPRIMA)")
- * @OA\Tag(name="Tenant", description="Manajemen tenant/OPD - daftar dan switch tenant")
- * @OA\Tag(name="IAM", description="IAM/RBAC - manajemen role dan permissions")
- * @OA\Tag(name="App Picker", description="Daftar aplikasi yang bisa diakses user berdasarkan role")
- * @OA\Tag(name="Staff", description="Manajemen user oleh staff - membuat akun user baru")
+ * @OA\Tag(name="Auth V2", description="Authentication V2 - User authentication, registration, and profile management")
+ * @OA\Tag(name="Master Data V2", description="Master Data V2 - Unit Kerja, Dinas, and Roles")
  */
 final class OpenApi{}

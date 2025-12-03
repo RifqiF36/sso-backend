@@ -55,9 +55,13 @@ class AuthController extends Controller
         // Tampilkan menu sesuai format lama (pakai array asli, bukan hanya nama)
         $menuList = $menu;
 
+        // Get current token from Bearer header
+        $token = request()->bearerToken();
+
         return response()->json([
             'success' => true,
             'data' => [
+                'token' => $token,
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,
