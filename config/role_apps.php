@@ -27,7 +27,7 @@ return [
     'apps' => [
         'asset' => [
             'name' => 'Asset Management',
-            'url' => env('APP_ASSET_URL', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
+            'url' => env('APP_ASSET_URL', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
             'roles' => ['staff', 'kepala_seksi', 'kepala seksi', 'verifikator', 'admin', 'auditor', 'diskominfo'],
             'default_route' => '/Dashboard-staff',
             'role_routes' => [
@@ -40,15 +40,15 @@ return [
                 'auditor' => '/dashboard-auditor',
             ],
             'role_urls' => [
-                'staff' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'user_dinas' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'dinas' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'admin' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'auditor' => sso_role_url('http://localhost:5404/', 'APP_ASSET_URL_AUDITOR', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'diskominfo' => sso_role_url('http://localhost:5403/', 'APP_ASSET_URL_DISKOMINFO', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'kepala_seksi' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'kepala seksi' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
-                'verifikator' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/sso/callback?token={token}'),
+                'staff' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'user_dinas' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'dinas' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'admin' => sso_role_url('http://localhost:5401/', 'APP_ASSET_URL_STAFF', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'auditor' => sso_role_url('http://localhost:5404/', 'APP_ASSET_URL_AUDITOR', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'diskominfo' => sso_role_url('http://localhost:5403/', 'APP_ASSET_URL_DISKOMINFO', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'kepala_seksi' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'kepala seksi' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
+                'verifikator' => sso_role_url('http://localhost:5402/', 'APP_ASSET_URL_KEPALA_SEKSI', 'https://api.siprima.digitaltech.my.id/api/sso/callback?token={token}'),
             ],
             'description' => 'Aset Management System',
             'icon' => 'siprima.png',
