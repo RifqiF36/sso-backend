@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'v2/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', '*')),
+    'allowed_origins' => ['http://localhost:8000', 'http://localhost:8001', 'http://localhost:5173', 'https://api.siprima.digitaltech.my.id', 'https://simantic.online', 'https://api-sindra.okkyprojects.com', 'http://127.0.0.1:9000', 'http://127.0.0.1:8000', 'http://127.0.0.1:8001', 'http://siprima.test', 'http://sindra.test', 'http://simantic.test'],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];
