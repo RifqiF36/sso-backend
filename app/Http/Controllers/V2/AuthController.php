@@ -12,6 +12,7 @@ use App\Models\Otp;
 use App\Mail\VerificationOtp;
 use App\Mail\ResetPasswordOtp;
 use App\Services\MenuService;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA; // <<< DITAMBAHKAN AGAR ANOTASI DIKENALI
 
 /**
@@ -505,6 +506,7 @@ class AuthController extends Controller
         ]);
 
         // Send OTP via email
+        Log::info('Sending email with OTP: ' . $otpCode . ' to user: ' . $user->name);
         Mail::to($user->email)->send(new VerificationOtp($otpCode, $user->name));
 
         return response()->json([

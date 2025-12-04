@@ -67,6 +67,9 @@
     </style>
 </head>
 <body>
+    @php 
+        Illuminate\Support\Facades\Log::info('Sending email with OTP blade: ');
+    @endphp
     <div class="container">
         <div class="header">
             <h1>✉️ Verifikasi Email</h1>

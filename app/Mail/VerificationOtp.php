@@ -8,8 +8,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class VerificationOtp extends Mailable implements ShouldQueue
+class VerificationOtp extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -21,6 +22,7 @@ class VerificationOtp extends Mailable implements ShouldQueue
      */
     public function __construct($otp, $userName = null)
     {
+        Log::info('Creating VerificationOtp email with OTP: ' . $otp . ' for user: ' . $userName);
         $this->otp = $otp;
         $this->userName = $userName;
     }
@@ -40,8 +42,13 @@ class VerificationOtp extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
+        Log::info('Preparing email with OTP: ' . $this->otp . ' for user: ' . $this->userName);
         return new Content(
             view: 'emails.verification-otp',
+            with: [
+                'otp' => $this->otp,
+                'userName' => $this->userName,
+            ],
         );
     }
 
