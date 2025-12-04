@@ -48,15 +48,15 @@ class AuthController extends Controller
 
         $user = User::with(['role', 'dinas', 'unitkerja'])->find(Auth::id());
 
+        // Get current token from Bearer header
+        $token = request()->bearerToken();
+
         // Ambil nama role (string) untuk mapping menu
         $roleName = $user->role ? $user->role->name : null;
-        $menu = MenuService::getMenuByRole($roleName);
+        $menu = MenuService::getMenuByRole($roleName, $token);
 
         // Tampilkan menu sesuai format lama (pakai array asli, bukan hanya nama)
         $menuList = $menu;
-
-        // Get current token from Bearer header
-        $token = request()->bearerToken();
 
         return response()->json([
             'success' => true,

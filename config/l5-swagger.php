@@ -315,7 +315,7 @@ return [
          */
         'constants' => [
             // 'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'https://api.bispro.digitaltech.my.id'),
-            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://localhost:8000'), 
+            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://localhost:8001'), 
         ],
     ],
 ];

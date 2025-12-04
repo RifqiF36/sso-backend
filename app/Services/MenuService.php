@@ -8,9 +8,10 @@ class MenuService
      * Get menu configuration based on user role
      *
      * @param string|null $role
+     * @param string|null $token
      * @return array
      */
-    public static function getMenuByRole(?string $role): array
+    public static function getMenuByRole(?string $role, ?string $token = null): array
     {
         $roleApps = config('role_apps.apps', []);
         $menuMapping = config('menu.role_menu_mapping', []);
@@ -26,9 +27,16 @@ class MenuService
         foreach ($allowedApps as $appKey) {
             if (isset($roleApps[$appKey])) {
                 $app = $roleApps[$appKey];
+                $url = self::getRoleUrl($app, $normalizedRole);
+                
+                // Replace {token} placeholder with actual token
+                if ($token) {
+                    $url = str_replace('{token}', $token, $url);
+                }
+                
                 $menu[] = [
                     'name' => $app['name'],
-                    'url' => self::getRoleUrl($app, $normalizedRole),
+                    'url' => $url,
                     'logo' => $app['icon'] ?? '',
                     'description' => $app['description'] ?? '',
                 ];
