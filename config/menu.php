@@ -8,6 +8,7 @@ return [
     'role_menu_mapping' => [
         'admin_kota' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
         'kepala_dinas' => ['change'], // simantic
+        'kepala_bidang' => ['change'], // simantic
         'admin_dinas' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
         'kepala_bidang' => ['change', 'maintenance'], // simantic, sindra
         'kepala_seksi' => ['asset', 'change', 'maintenance'], // siprima, simantic, sindra
