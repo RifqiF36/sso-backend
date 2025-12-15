@@ -34,6 +34,11 @@ class RoleSeeder extends Seeder
                 'description' => 'Kepala Seksi',
             ],
             [
+                'name' => 'kepala_bidang',
+                'module' => 'asset_risk',
+                'description' => 'Kepala Bidang',
+            ],
+            [
                 'name' => 'auditor',
                 'module' => 'asset_risk',
                 'description' => 'Auditor',
