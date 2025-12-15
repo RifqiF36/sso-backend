@@ -61,11 +61,13 @@ Route::prefix('v2')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [V2AuthController::class, 'me']);
             Route::get('users', [V2AuthController::class, 'getAllUsers']);
-            Route::get('user/{id}', [V2AuthController::class, 'byId']);
             Route::put('user/{id}', [V2AuthController::class, 'updateUser']);
             Route::delete('user/{id}', [V2AuthController::class, 'deleteUser']);
             Route::post('logout', [V2AuthController::class, 'logout']);
         });
+
+        // Route 'user/{id}' without authentication
+        Route::get('user/{id}', [V2AuthController::class, 'byId']);
     });
 
     // Master Data Routes

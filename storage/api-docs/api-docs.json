@@ -141,12 +141,7 @@
                     "404": {
                         "description": "User not found"
                     }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ]
+                }
             },
             "put": {
                 "tags": [

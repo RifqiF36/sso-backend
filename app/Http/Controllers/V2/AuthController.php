@@ -129,31 +129,30 @@ class AuthController extends Controller
     }
 
     /**
-     * Get user by ID
-        *
-        * @OA\Get(
-        * path="/api/v2/auth/user/{id}",
-        * operationId="AuthV2GetUserById",
-        * tags={"Auth V2"},
-        * summary="Get user by ID",
-        * security={{"BearerAuth":{}}},
-        * @OA\Parameter(
-        * name="id",
-        * in="path",
-        * required=true,
-        * description="User ID",
-        * @OA\Schema(type="integer", example=1)
-        * ),
-        * @OA\Response(
-        * response=200,
-        * description="Success",
-        * @OA\JsonContent(
-        * @OA\Property(property="success", type="boolean", example=true),
-        * @OA\Property(property="data", type="object")
-        * )
-        * ),
-        * @OA\Response(response=404, description="User not found")
-        * )
+      * Get user by ID
+      *
+      * @OA\Get(
+      *     path="/api/v2/auth/user/{id}",
+      *     operationId="AuthV2GetUserById",
+      *     tags={"Auth V2"},
+      *     summary="Get user by ID",
+      *     @OA\Parameter(
+      *         name="id",
+      *         in="path",
+      *         required=true,
+      *         description="User ID",
+      *         @OA\Schema(type="integer", example=1)
+      *     ),
+      *     @OA\Response(
+      *         response=200,
+      *         description="Success",
+      *         @OA\JsonContent(
+      *             @OA\Property(property="success", type="boolean", example=true),
+      *             @OA\Property(property="data", type="object")
+      *         )
+      *     ),
+      *     @OA\Response(response=404, description="User not found")
+      * )
      */
     public function byId($id)
     {
